@@ -7,7 +7,7 @@ EXEC=Test_indexes
 all: $(EXEC)
 
 
-Test_indexes:   Test_indexes.o
+Test_indexes:   Test_indexes.o NaiveIndex.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 NaiveIndex.o: NaiveIndex.cpp
