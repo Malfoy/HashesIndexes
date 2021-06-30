@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS= -Wall -Ofast -std=c++11  -flto -pipe  -fopenmp -lz  -flto
+CFLAGS= -Wall -Ofast -std=c++11  -flto -pipe  -fopenmp -lz  -flto -Weffc++ -pedantic
 LDFLAGS=-flto -lpthread -fopenmp -lz   -flto
 EXEC=Test_indexes
 

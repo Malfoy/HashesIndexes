@@ -20,7 +20,7 @@ using namespace std;
 
 
 int main(int argc, char** argv) {
-  cout<<"Hello world"<<endl;
-  NaiveIndex index(1000);
-  return 0;
+        cout<<"Hello world"<<endl;
+        NaiveIndex index(1000);
+        return 0;
 }
