@@ -12,7 +12,9 @@
 
 
 
+
 using namespace std;
+
 
 
 
@@ -64,6 +66,8 @@ vector<uint8_t> NaiveIndex::compute_sketch(const string& sequenceStr,const int k
         return result;
 }
 
+
+
 void NaiveIndex::add_sketch(const vector<uint8_t>& sketchToAdd)
 {
         int sketchSize(sketchToAdd.size());
@@ -73,35 +77,37 @@ void NaiveIndex::add_sketch(const vector<uint8_t>& sketchToAdd)
         }
 }
 
-/* TO_ERASE_? bool compare_sketch(const vector<uint8_t>& sequenceStudied,vector<vector<uint8_t>> genomeNumber)
-   {
-   for (int position = 0 ; position < (sketchToAdd.size()) ; position++)
-   {
-    matrix[position].push_back(sketchToAdd[position]);
-   }
-   } */
 
 
-vector<double> NaiveIndex::query_sequence(const string& sequenceSearched)
+vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, int acceptanceTreshold = 0)
 {
-        int matrixSize(matrix[0].size());
-        double hitsCounter(0);
-        vector<double> bestScore(0);
-        vector<uint8_t> vectorisedQuery(compute_sketch(sequenceSearched, kmerSize));//TODO
-        for (int positionY = 0; positionY < (matrixSize); positionY++)//browse the buckets
+        int matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0);
+        double genomeNumberDotJaccarind(0);
+        vector<double> bestScores(0);
+        vector<uint8_t> vectorisedQuery(compute_sketch(sequenceSearched, kmerSize));
+        for (int genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the buckets
         {
-                for (int positionX = 0; positionX < nb_minimizer; positionX++)//browse the query
+                for (int bucketX = 0; bucketX < nb_minimizer; bucketX++)//browse the query
                 {
-                        if(vectorisedQuery[positionX] != 255 && (matrix[positionX][positionY]) == vectorisedQuery[positionX])
+                        if(vectorisedQuery[bucketX] != 255)
                         {
-                                hitsCounter++;
+                                if((matrix[bucketX][genomeY]) == vectorisedQuery[bucketX])
+                                {
+                                        hitsCounter++;
+                                }
+                                else
+                                {
+                                        noHitBuckets++;
+                                }
                         }
                 }
-                if(hitsCounter > 0)//TODO maybe other trigger count
+                if(hitsCounter > acceptanceTreshold)
                 {
-                        bestScore.push_back(hitsCounter);
+                        genomeNumberDotJaccarind = genomeY + (hitsCounter/((hitsCounter+noHitBuckets)*10)); // example : 101.029 => Bucket number 101 and 0.29 Jaccard Index
+                        bestScores.push_back(genomeNumberDotJaccarind);
+                        genomeNumberDotJaccarind = 0;//reset for a new loop
                 }
-                hitsCounter = 0;//reset the counter
+                hitsCounter = 0;//reset for a new loop
         }
-        return bestScore;
+        return bestScores;
 }
