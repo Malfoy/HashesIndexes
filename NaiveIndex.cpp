@@ -12,40 +12,40 @@
 
 
 
-
 using namespace std;
-
 
 
 
 hash<std::string> kmer_hasher;
 
 
-
-NaiveIndex::NaiveIndex(int64_t bucketsNumber) : nb_minimizer(bucketsNumber), nb_genomes(0), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
+//constructor
+NaiveIndex::NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb) : nb_minimizer(bucketsNumber), nb_genomes(0), decimal_lsb(decimal_for_lsb), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
 {
         matrix.resize(bucketsNumber);
 }
 
 
 
-uint64_t NaiveIndex::get_bucket(int64 primaryHash)
+//giving minimizer
+uint64 NaiveIndex::get_bucket(int64 primaryHash)
 {
         return primaryHash>>(64-bit_to_keep_minimizer); //bit shift to know bucket, first bits, most significant bit (MSB)
 }
 
 
 
-uint8_t NaiveIndex::get_hash(int64 primaryHash)
+//record the LSB number that we choose
+uint8 NaiveIndex::get_hash(int64 primaryHash)
 {
-        return primaryHash%256; //to obtain the hash we want, last bits, least significant bit (LSB)
+        return primaryHash%decimal_lsb; //to obtain the hash we want, last bits, least significant bit (LSB)
 }
 
 
 
-vector<uint8_t> NaiveIndex::compute_sketch(const string& sequenceStr,const int kmerSize)
+vector<uint8> NaiveIndex::compute_sketch(const string& sequenceStr,const int kmerSize)
 {
-        vector<uint8_t> result(nb_minimizer,255); // the resulting vector
+        vector<uint8> result(nb_minimizer,255); // the resulting vector
 
         // a For loop to hash every kmer of a sequence, distribute them in different
         // bucket with their MSB on one byte (255 buckets) and record some LSB number
@@ -56,7 +56,7 @@ vector<uint8_t> NaiveIndex::compute_sketch(const string& sequenceStr,const int k
         for (position = 0; position < (sequenceSize - kmerSize); position++)
         {
                 string kmerToHash{sequenceStr.substr (position,kmerSize)};
-                int64_t hashOfKmer(kmer_hasher(kmerToHash));
+                int64 hashOfKmer(kmer_hasher(kmerToHash));
                 if(result[get_bucket(hashOfKmer)] > get_hash(hashOfKmer))
                 {
                         result[get_bucket(hashOfKmer)] =  get_hash(hashOfKmer);
@@ -68,7 +68,7 @@ vector<uint8_t> NaiveIndex::compute_sketch(const string& sequenceStr,const int k
 
 
 
-void NaiveIndex::add_sketch(const vector<uint8_t>& sketchToAdd)
+void NaiveIndex::add_sketch(const vector<uint8>& sketchToAdd)
 {
         int sketchSize(sketchToAdd.size());
         for (int position = 0; position < sketchSize; position++)
@@ -86,9 +86,9 @@ vector<score_strct> NaiveIndex::query_sequence(const string& sequenceSearched, i
         vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched, kmerSize));
         for (int genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the buckets
         {
-                for (int bucketX = 0; bucketX < nb_minimizer; bucketX++)//browse the query
+                for (int bucketX = 0; bucketX < nb_minimizer; bucketX++)//browse the query and genome sketch
                 {
-                        if(vectorisedQuery[bucketX] != 255)
+                        if(vectorisedQuery[bucketX] != 255) //because we don't want record unsignificant bucket
                         {
                                 if((matrix[bucketX][genomeY]) == vectorisedQuery[bucketX])
                                 {
@@ -96,7 +96,7 @@ vector<score_strct> NaiveIndex::query_sequence(const string& sequenceSearched, i
                                 }
                                 else
                                 {
-                                        noHitBuckets++;
+                                        noHitBuckets++; //will participe at Jaccard index calcul
                                 }
                         }
                 }
