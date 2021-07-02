@@ -83,8 +83,6 @@ vector<score_strct> NaiveIndex::query_sequence(const string& sequenceSearched, i
 {
         vector<score_strct> allScores;
         int matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0);
-        //double genomeNumberDotJaccarind(0);
-        //vector<double> bestScores(0);
         vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched, kmerSize));
         for (int genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the buckets
         {
