@@ -61,5 +61,7 @@ uint64 get_bucket(int64 primaryHash);
 uint8 get_hash(int64 primaryHash);
 };
 
-
+class TestTable {
+  nb_
+};
 #endif
