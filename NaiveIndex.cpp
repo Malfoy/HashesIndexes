@@ -62,6 +62,56 @@ uint8 NaiveIndex::get_popcount(int64 primaryHash)
 }
 
 
+uint8 NaiveIndex::get_hyper_minhash62(int64 primaryHash)
+{
+        uint8 result(0);
+        result=get_hyperloglog(primaryHash);
+        result<<=2;
+        result+=primaryHash%4;
+        return result;
+}
+
+
+
+uint8 NaiveIndex::get_hyper_minhash53(int64 primaryHash)
+{
+        uint8 result(0);
+        result=min(get_hyperloglog(primaryHash),(uint8)31);
+        result<<=3;
+        result+=primaryHash%8;
+        return result;
+}
+
+
+uint8 NaiveIndex::get_hyper_minhash44(int64 primaryHash)
+{
+        uint8 result(0);
+        result=min(get_hyperloglog(primaryHash),(uint8)15);
+        result<<=4;
+        result+=primaryHash%16;
+        return result;
+}
+
+
+uint8 NaiveIndex::get_hyper_minhash35(int64 primaryHash)
+{
+        uint8 result(0);
+        result=min(get_hyperloglog(primaryHash),(uint8)7);
+        result<<=5;
+        result+=primaryHash%32;
+        return result;
+}
+
+uint8 NaiveIndex::get_hyper_minhash26(int64 primaryHash)
+{
+        uint8 result(0);
+        result=min(get_hyperloglog(primaryHash),(uint8)3);
+        result<<=6;
+        result+=primaryHash%64;
+        return result;
+}
+
+
 
 vector<uint8> NaiveIndex::compute_sketch(const string& sequenceStr,const int kmerSize)
 {
