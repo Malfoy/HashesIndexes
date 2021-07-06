@@ -35,10 +35,30 @@ uint64 NaiveIndex::get_bucket(int64 primaryHash)
 
 
 
-//record the LSB number that we choose
 uint8 NaiveIndex::get_hash(int64 primaryHash)
 {
+		primaryHash%=(1<<(64-bit_to_keep_minimizer));
+        return get_minhash(primaryHash);
+}
+
+
+
+//record the LSB number that we choose
+uint8 NaiveIndex::get_minhash(int64 primaryHash)
+{
         return primaryHash%decimal_lsb; //to obtain the hash we want, last bits, least significant bit (LSB)
+}
+
+
+uint8 NaiveIndex::get_hyperloglog(int64 primaryHash)
+{
+        return log2(primaryHash); //to obtain the hash we want, last bits, least significant bit (LSB)
+}
+
+
+uint8 NaiveIndex::get_popcount(int64 primaryHash)
+{
+        return __builtin_popcount(primaryHash); 
 }
 
 

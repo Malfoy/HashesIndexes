@@ -7,6 +7,8 @@
 #include <vector>
 #include <atomic>
 #include <mutex>
+#include <bit>
+#include <bitset>
 #include <stdint.h>
 
 // removal '_t'
@@ -59,9 +61,12 @@ vector<uint8> compute_sketch(const string& sequenceStr,const int kmerSize);
 uint8 kmer_hasher(const string& str);
 uint64 get_bucket(int64 primaryHash);
 uint8 get_hash(int64 primaryHash);
+uint8 get_minhash(int64 primaryHash);
+uint8 get_hyperloglog(int64 primaryHash);
+uint8 get_popcount(int64 primaryHash);
 };
 
 class TestTable {
-  nb_
+  
 };
 #endif
