@@ -69,6 +69,7 @@ uint8 get_hyper_minhash53(int64 primaryHash);
 uint8 get_hyper_minhash44(int64 primaryHash);
 uint8 get_hyper_minhash35(int64 primaryHash);
 uint8 get_hyper_minhash26(int64 primaryHash);
+uint8 get_double_hyperloglog(int64 primaryHash);
 };
 
 class TestTable {
