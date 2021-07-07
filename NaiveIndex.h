@@ -34,6 +34,13 @@ struct score_strct {
         double jaccardIndex;
 };
 
+/*Structure of score containing a trigger number of hits between query and
+   indexed genome and will be injected in Scores vector*/
+struct hashTable_strct {
+        const string keptKmer;
+        uint32 genomeNumber;
+};
+
 
 /* Produce an index matrix containing a sketch by genome line with the function
    to add sketch and to query a sequence among the genome with a score based
@@ -73,6 +80,6 @@ uint8 get_double_hyperloglog(int64 primaryHash);
 };
 
 class TestTable {
-  
+
 };
 #endif

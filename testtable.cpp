@@ -14,9 +14,19 @@ TestTable::TestTable() : kmerSize(31)
 }
 
 
-void TestTable::record_sequence(const string& sequenceStr)
+void TestTable::record_sequence(const string& sequenceStr, const string& Genome)
 {
   //insertion loop of kmer
+  int sequenceSize(sequenceStr.size()), position(0);
+
+  for (position = 0; position < (sequenceSize - kmerSize); position++)
+  {
+          string kmerToStudy{sequenceStr.substr (position,kmerSize)};
+          if hashTable[kmerToStudy].keptKmer == kmerToStudy && hashTable[kmerToStudy].genomeNumber //TODO mettre une liste
+          {
+
+          }
+
 }
 
 uint64 TestTable::query_belonging_genome(const string& sequenceStr)
