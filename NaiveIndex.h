@@ -36,9 +36,9 @@ struct score_strct {
 
 /*Structure of score containing a trigger number of hits between query and
    indexed genome and will be injected in Scores vector*/
-struct hashTable_strct {
-        const string keptKmer;
-        uint32 genomeNumber;
+struct hashTable_cell_strct {
+        string keptKmer;
+        vector<uint32> genomesNumberV;
 };
 
 
