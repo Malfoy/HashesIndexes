@@ -56,26 +56,30 @@ uint8 NaiveIndex::get_hyperloglog(int64 primaryHash)
 }
 
 
-
+//Hash method
 uint64_t xs(uint64_t y){
-	y^=(y<<13); y^=(y>>17);y=(y^=(y<<15)); return y;
+  uint64_t result(0);
+	y^=(y<<13);
+  y^=(y>>17);
+  result=(y^=(y<<15));
+  return result;
 }
 
 
 
 uint8 NaiveIndex::get_double_hyperloglog(int64 primaryHash)
 {
-        uint8 result=min((uint8)log2(primaryHash),(uint8)15); 
+        uint8 result=min((uint8)log2(primaryHash),(uint8)15);
         result<<=4;
         uint8 hll2(log2(xs(primaryHash)));
         return result+=min(hll2,(uint8)15);
-        
+
 }
 
 
 uint8 NaiveIndex::get_popcount(int64 primaryHash)
 {
-        return __builtin_popcount(primaryHash); 
+        return __builtin_popcount(primaryHash);
 }
 
 

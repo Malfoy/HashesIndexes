@@ -34,13 +34,6 @@ struct score_strct {
         double jaccardIndex;
 };
 
-/*Structure of score containing a trigger number of hits between query and
-   indexed genome and will be injected in Scores vector*/
-struct hashTable_cell_strct {
-        string keptKmer;
-        vector<uint32> genomesNumberV;
-};
-
 
 /* Produce an index matrix containing a sketch by genome line with the function
    to add sketch and to query a sequence among the genome with a score based
@@ -80,6 +73,16 @@ uint8 get_double_hyperloglog(int64 primaryHash);
 };
 
 class TestTable {
+public:
 
+//attributes
+int64 kmerSize;
+
+//constructor
+TestTable();
+
+//methods
+void record_sequence(const string& sequenceStr, const uint32 Genome);
+uint64 query_belonging_genome(const string& sequenceStr);
 };
 #endif
