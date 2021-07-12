@@ -2,9 +2,9 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include <atomic>
+#include <atomic>  // to isolate the calcul thread
 #include <functional>
-#include <mutex>
+#include <mutex>  // to orchestrate thread
 #include <string>
 #include <stdint.h>
 #include <math.h>
@@ -195,7 +195,7 @@ vector<score_strct> NaiveIndex::query_sequence(const string& sequenceSearched, i
                 {
                         score_strct transitoryStructure;
                         transitoryStructure.genomeNumber = genomeY;
-                        transitoryStructure.jaccardIndex = genomeY + (hitsCounter/((hitsCounter+noHitBuckets)*10)); // example : 101.029 => Bucket number 101 and 0.29 Jaccard Index;
+                        transitoryStructure.jaccardIndex = hitsCounter/(hitsCounter+noHitBuckets);
                         allScores.push_back(transitoryStructure);
                 }
                 hitsCounter = 0;//reset for a new loop

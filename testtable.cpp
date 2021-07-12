@@ -1,16 +1,25 @@
 #include <iostream>
-#include <string>
-#include <unordered_map>
+#include <vector>
+#include <string>  // for substr
+#include <unordered_map>  // for Hashtable
+#include <algorithm>  // for sorting
+#include <utility> // for pair
 #include "NaiveIndex.h"
+#include <cassert> //for assertion
+
+
 
 using namespace std;
+
+
+
 
 hash<std::string> kmer_hasher;
 
 //constructor
-TestTable::TestTable() : kmerSize(31)
+TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(genomeQuantityForTest)
 {
-  unordered_map<string, vector<uint32> > hashTable;
+  unordered_map<string, vector<uint32> > hashTable; // will contains genomes references for every kmer
 }
 
 
@@ -49,8 +58,22 @@ void TestTable::record_sequence(const string& sequenceStr, const uint32 Genome)
           }
 }
 
-uint64 TestTable::query_belonging_genome(const string& sequenceStr)
+vector<hits_genom_nmbrs> TestTable::query_belonging_genome(const string& sequenceStr)
 {
-  //comparison loop of kmer and select the best result.
-  return genome_number;
+  vector<hits_genom_nmbrs> allScores(nbGenomes,0);//vector of pairs containing numbers of hit and corresponding genome number
+  int sequenceSize(sequenceStr.size()), position(0);
+  for (position = 0; position < (sequenceSize - kmerSize); position++) //comparison loop of kmer and select the best result.
+  {
+    string kmerToStudy{sequenceStr.substr (position,kmerSize)};
+    if (hashTable.count(kmerToStudy) == 1)
+    {
+      for (positionGen = 0; positionGen < hashTable[kmerToStudy].second.size(); positionGen++) //browsing of every genome associated with kmer
+      {
+        allScores[hashTable[kmerToStudy].second[positionGen]]++; //increment the value at the "genome number" index of vector allScores.
+      }
+    }
+
+  }
+  assert((allScores[0].second > 0)==1); //to verify there is the genome 0.
+  return allScores;
 }
