@@ -36,7 +36,6 @@ struct score_strct {
         double jaccardIndex;
 };
 
-pair <uint32, uint32> hits_genom_nmbrs;
 
 /* Produce an index matrix containing a sketch by genome line with the function
    to add sketch and to query a sequence among the genome with a score based
@@ -87,6 +86,6 @@ TestTable(uint32 genomeQuantityForTest);
 
 //methods
 void record_sequence(const string& sequenceStr, const uint32 Genome);
-vector<pair> query_belonging_genome(const string& sequenceStr);
+vector<pair <uint32, uint32>> query_belonging_genome(const string& sequenceStr);
 };
 #endif

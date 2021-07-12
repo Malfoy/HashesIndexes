@@ -60,9 +60,9 @@ void TestTable::record_sequence(const string& sequenceStr, const uint32 Genome)
 
 /* There are two ways here to have genome number, first the index, then the second
 value of the pair*/
-vector<hits_genom_nmbrs> TestTable::query_belonging_genome(const string& sequenceStr)
+vector<pair <uint32, uint32>> TestTable::query_belonging_genome(const string& sequenceStr)
 {
-  vector<hits_genom_nmbrs> allScores(nbGenomes,0);//vector of pairs containing numbers of hit and corresponding genome number
+  vector<pair <uint32, uint32>> allScores(nbGenomes,0);//vector of pairs containing numbers of hit and corresponding genome number
   int sequenceSize(sequenceStr.size()), position(0);
   for (position = 0; position < (sequenceSize - kmerSize); position++) //comparison loop of kmer and select the best result.
   {
