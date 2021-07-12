@@ -58,6 +58,8 @@ void TestTable::record_sequence(const string& sequenceStr, const uint32 Genome)
           }
 }
 
+/* There are two ways here to have genome number, first the index, then the second
+value of the pair*/
 vector<hits_genom_nmbrs> TestTable::query_belonging_genome(const string& sequenceStr)
 {
   vector<hits_genom_nmbrs> allScores(nbGenomes,0);//vector of pairs containing numbers of hit and corresponding genome number
@@ -69,7 +71,8 @@ vector<hits_genom_nmbrs> TestTable::query_belonging_genome(const string& sequenc
     {
       for (positionGen = 0; positionGen < hashTable[kmerToStudy].second.size(); positionGen++) //browsing of every genome associated with kmer
       {
-        allScores[hashTable[kmerToStudy].second[positionGen]]++; //increment the value at the "genome number" index of vector allScores.
+        allScores[hashTable[kmerToStudy].second[positionGen]].first++; //increment the value at the "genome number" index of vector allScores.
+        allScores[hashTable[kmerToStudy].second[positionGen]].second = allScores[hashTable[kmerToStudy].second[positionGen]]; // we'll certainly need the genome value in second position.
       }
     }
 
