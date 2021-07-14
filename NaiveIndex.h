@@ -57,7 +57,7 @@ NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb = 256);
 
 //methods
 void add_sequence(const string& theSequence);
-vector<score_strct> query_sequence(const string& sequenceSearched, int acceptanceTreshold);
+vector<score_strct> query_sequence(const string& sequenceSearched, int acceptanceTreshold = 0);
 void add_sketch(const vector<uint8>& sketchToAdd);
 vector<uint8> compute_sketch(const string& sequenceStr,const int kmerSize);
 uint8 kmer_hasher(const string& str);
@@ -66,12 +66,9 @@ uint8 get_hash(int64 primaryHash);
 uint8 get_minhash(int64 primaryHash);
 uint8 get_hyperloglog(int64 primaryHash);
 uint8 get_popcount(int64 primaryHash);
-uint8 get_hyper_minhash62(int64 primaryHash);
-uint8 get_hyper_minhash53(int64 primaryHash);
-uint8 get_hyper_minhash44(int64 primaryHash);
-uint8 get_hyper_minhash35(int64 primaryHash);
-uint8 get_hyper_minhash26(int64 primaryHash);
+uint8 get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber = 62);
 uint8 get_double_hyperloglog(int64 primaryHash);
+
 };
 
 class TestTable {
@@ -86,6 +83,6 @@ TestTable(uint32 genomeQuantityForTest);
 
 //methods
 void record_sequence(const string& sequenceStr, const uint32 Genome);
-vector<pair <uint32, uint32>> query_belonging_genome(const string& sequenceStr);
+vector<pair <uint32, uint32> > query_belonging_genome(const string& sequenceStr);
 };
 #endif

@@ -8,6 +8,7 @@
 #include <string>
 #include <stdint.h>
 #include <math.h>
+#include <cassert>
 #include "NaiveIndex.h"
 
 
@@ -37,7 +38,7 @@ uint64 NaiveIndex::get_bucket(int64 primaryHash)
 
 uint8 NaiveIndex::get_hash(int64 primaryHash)
 {
-		primaryHash%=(1<<(64-bit_to_keep_minimizer));
+        primaryHash%=(1<<(64-bit_to_keep_minimizer));
         return get_minhash(primaryHash);
 }
 
@@ -58,11 +59,11 @@ uint8 NaiveIndex::get_hyperloglog(int64 primaryHash)
 
 //Hash method
 uint64_t xs(uint64_t y){
-  uint64_t result(0);
-	y^=(y<<13);
-  y^=(y>>17);
-  result=(y^=(y<<15));
-  return result;
+        uint64_t result(0);
+        y^=(y<<13);
+        y^=(y>>17);
+        result=(y^=(y<<15));
+        return result;
 }
 
 
@@ -83,55 +84,39 @@ uint8 NaiveIndex::get_popcount(int64 primaryHash)
 }
 
 
-uint8 NaiveIndex::get_hyper_minhash62(int64 primaryHash)
-{
-        uint8 result(0);
-        result=get_hyperloglog(primaryHash);
-        result<<=2;
-        result+=primaryHash%4;
+uint8 NaiveIndex::get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber)
+{//accepted values == 62,53,44,35,26
+        uint8 result(0), bitShift(0);
+        switch (hyperMinhashNumber) {
+        case 62:
+                bitShift = 2;
+                result=get_hyperloglog(primaryHash);
+                break;
+        case 53:
+                bitShift = 3;
+                result=min(get_hyperloglog(primaryHash),(uint8)31);
+                break;
+        case 44:
+                bitShift = 4;
+                result=min(get_hyperloglog(primaryHash),(uint8)15);
+                break;
+        case 35:
+                bitShift = 5;
+                result=min(get_hyperloglog(primaryHash),(uint8)7);
+                break;
+        case 26:
+                bitShift = 6;
+                result=min(get_hyperloglog(primaryHash),(uint8)3);
+                break;
+        default:
+                assert(hyperMinhashNumber == 62);
+
+        }
+        result<<=bitShift;
+        uint8 bitPower(pow(2,bitShift));
+        result+=primaryHash%bitPower;
         return result;
 }
-
-
-
-uint8 NaiveIndex::get_hyper_minhash53(int64 primaryHash)
-{
-        uint8 result(0);
-        result=min(get_hyperloglog(primaryHash),(uint8)31);
-        result<<=3;
-        result+=primaryHash%8;
-        return result;
-}
-
-
-uint8 NaiveIndex::get_hyper_minhash44(int64 primaryHash)
-{
-        uint8 result(0);
-        result=min(get_hyperloglog(primaryHash),(uint8)15);
-        result<<=4;
-        result+=primaryHash%16;
-        return result;
-}
-
-
-uint8 NaiveIndex::get_hyper_minhash35(int64 primaryHash)
-{
-        uint8 result(0);
-        result=min(get_hyperloglog(primaryHash),(uint8)7);
-        result<<=5;
-        result+=primaryHash%32;
-        return result;
-}
-
-uint8 NaiveIndex::get_hyper_minhash26(int64 primaryHash)
-{
-        uint8 result(0);
-        result=min(get_hyperloglog(primaryHash),(uint8)3);
-        result<<=6;
-        result+=primaryHash%64;
-        return result;
-}
-
 
 
 vector<uint8> NaiveIndex::compute_sketch(const string& sequenceStr,const int kmerSize)
@@ -170,7 +155,7 @@ void NaiveIndex::add_sketch(const vector<uint8>& sketchToAdd)
 
 
 
-vector<score_strct> NaiveIndex::query_sequence(const string& sequenceSearched, int acceptanceTreshold = 0)
+vector<score_strct> NaiveIndex::query_sequence(const string& sequenceSearched, int acceptanceTreshold)
 {
         vector<score_strct> allScores;
         int matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0);
