@@ -58,25 +58,29 @@ void TestTable::record_sequence(const string& sequenceStr, const uint32 Genome)
           }
 }
 
-/* There are two ways here to have genome number, first the index, then the second
-value of the pair*/
-vector<pair <uint32, uint32>> TestTable::query_belonging_genome(const string& sequenceStr)
+
+
+vector<double> TestTable::query_belonging_genome(const string& sequenceStr, double thresholdJaccard)
 {
-  vector<pair <uint32, uint32>> allScores(nbGenomes,0);//vector of pairs containing numbers of hit and corresponding genome number
-  int sequenceSize(sequenceStr.size()), position(0);
-  for (position = 0; position < (sequenceSize - kmerSize); position++) //comparison loop of kmer and select the best result.
+  vector<double> allScores(nbGenomes,0);//vector containing numbers of hit with the number genome for the index
+  int sequenceSize(sequenceStr.size()), position(0), kmerSum(sequenceSize - kmerSize);
+  for (position = 0; position < (kmerSum); position++) //comparison loop of kmer and select the best result.
   {
     string kmerToStudy{sequenceStr.substr (position,kmerSize)};
     if (hashTable.count(kmerToStudy) == 1)
     {
       for (positionGen = 0; positionGen < hashTable[kmerToStudy].second.size(); positionGen++) //browsing of every genome associated with kmer
       {
-        allScores[hashTable[kmerToStudy].second[positionGen]].first++; //increment the value at the "genome number" index of vector allScores.
-        allScores[hashTable[kmerToStudy].second[positionGen]].second = allScores[hashTable[kmerToStudy].second[positionGen]]; // we'll certainly need the genome value in second position.
+        allScores[hashTable[kmerToStudy].second[positionGen]]++; //increment the value at the "genome number" index of vector allScores.
       }
     }
 
   }
-  assert((allScores[0].second > 0)==1); //to verify there is the genome 0.
+  assert(allScores[0] > 0); //to verify if there is the genome 0.
+
+  for (positionGen=0; positionGen < nbGenomes; positionGen++) //browse the vector to transform hits number in Jaccard Index
+  {
+    allScores[positionGen] = allScores[positionGen]/kmerSum;
+  }
   return allScores;
 }

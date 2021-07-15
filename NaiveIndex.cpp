@@ -155,9 +155,10 @@ void NaiveIndex::add_sketch(const vector<uint8>& sketchToAdd)
 
 
 
-vector<score_strct> NaiveIndex::query_sequence(const string& sequenceSearched, int acceptanceTreshold)
+vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double acceptanceTreshold)
 {
-        vector<score_strct> allScores;
+        assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);
+        vector<double> allScores(nb_genomes,0);
         int matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0);
         vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched, kmerSize));
         for (int genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the buckets
@@ -176,14 +177,13 @@ vector<score_strct> NaiveIndex::query_sequence(const string& sequenceSearched, i
                                 }
                         }
                 }
-                if(hitsCounter > acceptanceTreshold)
+                double occurentJaccardIndex = hitsCounter/(hitsCounter+noHitBuckets);
+                if(occurentJaccardIndex > acceptanceTreshold) //record just above the treshold jaccard index
                 {
-                        score_strct transitoryStructure;
-                        transitoryStructure.genomeNumber = genomeY;
-                        transitoryStructure.jaccardIndex = hitsCounter/(hitsCounter+noHitBuckets);
-                        allScores.push_back(transitoryStructure);
+                        allScores[genomeY] = occurentJaccardIndex;
                 }
                 hitsCounter = 0;//reset for a new loop
+                occurentJaccardIndex = 0;
         }
         return allScores;
 }

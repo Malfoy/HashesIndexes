@@ -29,14 +29,6 @@ using namespace std;
 
 
 
-/*Structure of score containing a trigger number of hits between query and
-   indexed genome and will be injected in Scores vector*/
-struct score_strct {
-        uint32 genomeNumber;
-        double jaccardIndex;
-};
-
-
 /* Produce an index matrix containing a sketch by genome line with the function
    to add sketch and to query a sequence among the genome with a score based
    on jaccard index. */
@@ -57,7 +49,7 @@ NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb = 256);
 
 //methods
 void add_sequence(const string& theSequence);
-vector<score_strct> query_sequence(const string& sequenceSearched, int acceptanceTreshold = 0);
+vector<double> query_sequence(const string& sequenceSearched, double acceptanceTreshold = 0);
 void add_sketch(const vector<uint8>& sketchToAdd);
 vector<uint8> compute_sketch(const string& sequenceStr,const int kmerSize);
 uint8 kmer_hasher(const string& str);
