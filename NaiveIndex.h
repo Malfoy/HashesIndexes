@@ -77,4 +77,19 @@ TestTable(uint32 genomeQuantityForTest);
 void record_sequence(const string& sequenceStr, const uint32 Genome);
 vector<pair <uint32, uint32> > query_belonging_genome(const string& sequenceStr);
 };
+
+// class about a structure to evaluate results
+class ComparisonMatrix {
+public:
+
+//attribute
+uint32 matrixHeight;
+
+//constructor
+ComparisonMatrix();
+
+//methods
+void add_result_vector(vector<double> resultVector);
+void create_comparison();
+};
 #endif
