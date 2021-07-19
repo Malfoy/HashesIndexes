@@ -59,11 +59,9 @@ uint8 NaiveIndex::get_hyperloglog(int64 primaryHash)
 
 //Hash method
 uint64_t xs(uint64_t y){
-        uint64_t result(0);
         y^=(y<<13);
         y^=(y>>17);
-        result=(y^=(y<<15));
-        return result;
+        return (y^=(y<<15));
 }
 
 
@@ -86,31 +84,12 @@ uint8 NaiveIndex::get_popcount(int64 primaryHash)
 
 uint8 NaiveIndex::get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber)
 {//accepted values == 62,53,44,35,26
-        uint8 result(0), bitShift(0);
-        switch (hyperMinhashNumber) {
-        case 62:
-                bitShift = 2;
+        uint8 result(0), bitShift(hyperMinhashNumber%10);
+        assert((int(pow(2,(8-bitShift)))) % 4 == 0 && bitShift < 7);
+        if (bitShift == 2) {
                 result=get_hyperloglog(primaryHash);
-                break;
-        case 53:
-                bitShift = 3;
-                result=min(get_hyperloglog(primaryHash),(uint8)31);
-                break;
-        case 44:
-                bitShift = 4;
-                result=min(get_hyperloglog(primaryHash),(uint8)15);
-                break;
-        case 35:
-                bitShift = 5;
-                result=min(get_hyperloglog(primaryHash),(uint8)7);
-                break;
-        case 26:
-                bitShift = 6;
-                result=min(get_hyperloglog(primaryHash),(uint8)3);
-                break;
-        default:
-                assert(hyperMinhashNumber == 62);
-
+        }else{
+                result=min(get_hyperloglog(primaryHash),(uint8)(pow(2,(8-bitShift))-1));
         }
         result<<=bitShift;
         uint8 bitPower(pow(2,bitShift));
@@ -133,8 +112,7 @@ vector<uint8> NaiveIndex::compute_sketch(const string& sequenceStr,const int kme
         {
                 string kmerToHash{sequenceStr.substr (position,kmerSize)};
                 int64 hashOfKmer(kmer_hasher(kmerToHash));
-                if(result[get_bucket(hashOfKmer)] > get_hash(hashOfKmer))
-                {
+                if(result[get_bucket(hashOfKmer)] > get_hash(hashOfKmer)){
                         result[get_bucket(hashOfKmer)] =  get_hash(hashOfKmer);
                 }
         }
@@ -170,15 +148,13 @@ vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double
                                 if((matrix[bucketX][genomeY]) == vectorisedQuery[bucketX])
                                 {
                                         hitsCounter++;
-                                }
-                                else
-                                {
+                                }else{
                                         noHitBuckets++; //will participe at Jaccard index calcul
                                 }
                         }
                 }
                 double occurentJaccardIndex = hitsCounter/(hitsCounter+noHitBuckets);
-                if(occurentJaccardIndex > acceptanceTreshold) //record just above the treshold jaccard index
+                if(occurentJaccardIndex > acceptanceTreshold) //record occurent score just above the treshold jaccard index
                 {
                         allScores[genomeY] = occurentJaccardIndex;
                 }
