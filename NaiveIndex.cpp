@@ -20,14 +20,14 @@ using namespace std;
 hash<std::string> kmer_hasher;
 
 
-//constructor
+//~~Constructor~~
 NaiveIndex::NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb) : nb_minimizer(bucketsNumber), nb_genomes(0), decimal_lsb(decimal_for_lsb), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
 {
         matrix.resize(bucketsNumber);
 }
 
 
-
+//~~Methods~~
 //giving minimizer
 uint64 NaiveIndex::get_bucket(int64 primaryHash)
 {
@@ -57,7 +57,7 @@ uint8 NaiveIndex::get_hyperloglog(int64 primaryHash)
 }
 
 
-//Hash method
+//Hash xshort method
 uint64_t xs(uint64_t y){
         y^=(y<<13);
         y^=(y>>17);
@@ -86,9 +86,12 @@ uint8 NaiveIndex::get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber
 {//accepted values == 62,53,44,35,26
         uint8 result(0), bitShift(hyperMinhashNumber%10);
         assert((int(pow(2,(8-bitShift)))) % 4 == 0 && bitShift < 7);
-        if (bitShift == 2) {
+        if (bitShift == 2)
+        {
                 result=get_hyperloglog(primaryHash);
-        }else{
+        }
+        else
+        {
                 result=min(get_hyperloglog(primaryHash),(uint8)(pow(2,(8-bitShift))-1));
         }
         result<<=bitShift;
@@ -112,14 +115,14 @@ vector<uint8> NaiveIndex::compute_sketch(const string& sequenceStr,const int kme
         {
                 string kmerToHash{sequenceStr.substr (position,kmerSize)};
                 int64 hashOfKmer(kmer_hasher(kmerToHash));
-                if(result[get_bucket(hashOfKmer)] > get_hash(hashOfKmer)){
+                if(result[get_bucket(hashOfKmer)] > get_hash(hashOfKmer))
+                {
                         result[get_bucket(hashOfKmer)] =  get_hash(hashOfKmer);
                 }
         }
 
         return result;
 }
-
 
 
 void NaiveIndex::add_sketch(const vector<uint8>& sketchToAdd)
@@ -130,7 +133,6 @@ void NaiveIndex::add_sketch(const vector<uint8>& sketchToAdd)
                 matrix[position].push_back(sketchToAdd[position]);
         }
 }
-
 
 
 vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double acceptanceTreshold)
@@ -148,7 +150,9 @@ vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double
                                 if((matrix[bucketX][genomeY]) == vectorisedQuery[bucketX])
                                 {
                                         hitsCounter++;
-                                }else{
+                                }
+                                else
+                                {
                                         noHitBuckets++; //will participe at Jaccard index calcul
                                 }
                         }

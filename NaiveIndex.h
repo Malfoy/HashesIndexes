@@ -35,7 +35,7 @@ using namespace std;
 class NaiveIndex {
 public:
 
-//attributes
+//~~Attributes~~
 int64 nb_minimizer;
 int64 nb_genomes;
 uint16 decimal_lsb;
@@ -43,11 +43,10 @@ int64 bit_to_keep_minimizer;
 int64 kmerSize;
 vector<vector<uint8> > matrix; //Column==Buckets line==genomes
 
-
-//constructor
+//~~Constructor~~
 NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb = 256);
 
-//methods
+//~~Methods~~
 void add_sequence(const string& theSequence);
 vector<double> query_sequence(const string& sequenceSearched, double acceptanceTreshold = 0);
 void add_sketch(const vector<uint8>& sketchToAdd);
@@ -60,36 +59,41 @@ uint8 get_hyperloglog(int64 primaryHash);
 uint8 get_popcount(int64 primaryHash);
 uint8 get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber = 62);
 uint8 get_double_hyperloglog(int64 primaryHash);
-
 };
+
+
 
 class TestTable {
 public:
 
-//attributes
+//~~Attributes~~
 int64 kmerSize;
 uint32 nbGenomes;
 
-//constructor
+//~~Constructor~~
 TestTable(uint32 genomeQuantityForTest);
 
-//methods
+//~~Methods~~
 void record_sequence(const string& sequenceStr, const uint32 Genome);
 vector<pair <uint32, uint32> > query_belonging_genome(const string& sequenceStr);
 };
+
+
 
 // class about a structure to evaluate results
 class ComparisonMatrix {
 public:
 
-//attribute
+//~~Attribute~~
 uint32 matrixHeight;
 
-//constructor
+//~~Constructor~~
 ComparisonMatrix();
 
-//methods
+//~~Methods~~
 void add_result_vector(vector<double> resultVector);
 void create_comparison();
+void print_vector(vector<double> vectorToPrint);
+void show_the_matrix();
 };
 #endif
