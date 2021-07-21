@@ -3,11 +3,11 @@
 #include <array>
 #include <chrono>
 #include <cstring>
+#include <string>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <mutex>
-#include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -19,8 +19,17 @@ using namespace std;
 
 
 
-int main(int argc, char** argv) {
-        cout<<"Hello world"<<endl;
-        NaiveIndex index(1000);
+
+int main(int argc, char** argv)
+{
+        string theFasta("10Bact.fa");
+        vector<string> allSequences(FastaParser::parse_this_fasta(theFasta));
+        TestTable refTable(allSequences.size());
+        NaiveIndex firstIndex(allSequences.size(),8);
+        for(uint32 sequenceNumber = 0; sequenceNumber < allSequences.size(); sequenceNumber++)
+        {
+          refTable.record_sequence(allSequences[sequenceNumber],sequenceNumber);
+          firstIndex.add_sketch(firstIndex.compute_sketch(allSequences[sequenceNumber], firstIndex.kmerSize));
+        }
         return 0;
 }

@@ -17,6 +17,7 @@ using namespace std;
 
 
 
+
 hash<std::string> kmer_hasher;
 
 

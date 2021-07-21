@@ -29,6 +29,7 @@ using namespace std;
 
 
 
+
 /* Produce an index matrix containing a sketch by genome line with the function
    to add sketch and to query a sequence among the genome with a score based
    on jaccard index. */
@@ -96,4 +97,15 @@ void create_comparison();
 void print_vector(vector<double> vectorToPrint);
 void show_the_matrix();
 };
+
+
+
+// class to extract sequences from fasta file into string type
+class FastaParser{
+public:
+
+//~~Methods~~
+string get_line_fasta(ifstream* partToExamine);
+vector<string> parse_this_fasta(string fastaFile); //??? or void parse_this_fasta(string fastaFile,void (*insertionFunction)(string));
+}
 #endif
