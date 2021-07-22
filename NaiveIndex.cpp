@@ -28,7 +28,19 @@ NaiveIndex::NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb) : nb_minimize
 }
 
 
+
 //~~Methods~~
+void NaiveIndex::add_fasta_for_naive(const string& fileName)
+{
+        ifstream theRead(fileName);
+        while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
+        {
+                NaiveIndex.compute_sketch(get_line_fasta(&theRead), NaiveIndex.kmerSize);
+        }
+        return;
+}
+
+
 //giving minimizer
 uint64 NaiveIndex::get_bucket(int64 primaryHash)
 {

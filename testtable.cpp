@@ -26,8 +26,19 @@ TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(gen
 
 
 //~~Methods~~
+void TestTable::parse_fasta_for_refTable(const string& fileName)
+{
+        ifstream theRead(fileName);
+        while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
+        {
+                record_sequence(get_line_fasta(&theRead),nbGenomes);
+        }
+        return;
+}
+
+
 //to find a number (genome here) in a vector
-bool Testtable::ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome)
+bool TestTable::ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome)
 {
         if (genomesVector.back() == wantedGenome)
         {

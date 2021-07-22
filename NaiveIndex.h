@@ -49,6 +49,7 @@ NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb = 256);
 
 //~~Methods~~
 void add_sequence(const string& theSequence);
+void add_fasta_for_naive(const string& fileName);
 vector<double> query_sequence(const string& sequenceSearched, double acceptanceTreshold = 0);
 void add_sketch(const vector<uint8>& sketchToAdd);
 vector<uint8> compute_sketch(const string& sequenceStr,const int kmerSize);
@@ -76,6 +77,7 @@ TestTable(uint32 genomeQuantityForTest);
 
 //~~Methods~~
 void record_sequence(const string& sequenceStr, const uint32 Genome);
+void parse_fasta_for_refTable(const string& fileName);
 vector<pair <uint32, uint32> > query_belonging_genome(const string& sequenceStr);
 };
 
@@ -100,12 +102,9 @@ void show_the_matrix();
 
 
 
-// class to extract sequences from fasta file into string type
-class FastaParser{
-public:
 
 //~~Methods~~
 string get_line_fasta(ifstream* partToExamine);
 vector<string> parse_this_fasta(string fastaFile); //??? or void parse_this_fasta(string fastaFile,void (*insertionFunction)(string));
-}
+
 #endif

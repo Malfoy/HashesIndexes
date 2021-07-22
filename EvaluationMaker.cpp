@@ -12,7 +12,10 @@
 #include "NaiveIndex.h"
 
 
+
 using namespace std;
+
+
 
 
 //~~Constructor~~

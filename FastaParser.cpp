@@ -11,7 +11,7 @@ using namespace std;
 
 
 
-string FastaParser::get_line_fasta(ifstream* partToExamine)
+string get_line_fasta(ifstream* partToExamine)
 {
         string line,justTheSequence;
         getline(*partToExamine,line);
@@ -25,14 +25,15 @@ string FastaParser::get_line_fasta(ifstream* partToExamine)
         return justTheSequence;
 }
 
-
-vector<string> FastaParser::parse_this_fasta(string fastaFile)
+/* FUNCTION BEFORE SPLIT IN NAIVE AND REF TABLE
+vector<string> parse_this_fasta(string fastaFile)
 {
         vector<string> genomeVector;
         ifstream theRead(fastaFile);
         while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
         {
-                genomeVector.pushback(get_line_fasta(&theRead));
+                genomeVector.push_back(get_line_fasta(&theRead));
         }
         return genomeVector;
 }
+*/
