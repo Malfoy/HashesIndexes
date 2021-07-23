@@ -19,17 +19,8 @@ using namespace std;
 
 
 //~~Constructor~~
-ComparisonMatrix::ComparisonMatrix() : matrixHeight(0)
+ComparisonMatrix::ComparisonMatrix() : matrixHeight(0), testMatrix(), final_comparison_scores()
 {
-        vector<vector<double> > testMatrix;
-        struct final_comparison_scores {
-                vector<uint32> studiedGenomeNumber;
-                vector<double> success;
-                vector<double> falsePositive;
-                vector<double> falseNegative;
-                vector<double> tooMuchKmer;
-                vector<double> notEnoughKmer;
-        };
 }
 
 
@@ -45,7 +36,7 @@ void ComparisonMatrix::add_result_vector(vector<double> resultVector)
         {
                 assert(matrixHeight==resultVector.size());
         }
-        testMatrix.push_back(resultVector)
+        testMatrix.push_back(resultVector);
 }
 
 
@@ -54,13 +45,15 @@ void ComparisonMatrix::add_result_vector(vector<double> resultVector)
 void ComparisonMatrix::create_comparison()
 {
         final_comparison_scores.studiedGenomeNumber = matrixHeight;
+        long unsigned int methodLine(0);//this type because it's compared to size()
+        uint32 genomeIndex(0);
 
         for (methodLine = 1; methodLine < testMatrix.size(); methodLine++)
         {
                 vector<uint32> differentScores(6);
-                for (genomeIndex = 0; genomeIndex < matrixHeight; genomeIndex)
+                for (genomeIndex = 0; genomeIndex < matrixHeight; genomeIndex++)
                 {
-                        if (testMatrix[0][genomeIndex] == testMatrix[methodLine])// if it's the same Jaccard index or both 0 it's a success
+                        if (testMatrix[0][genomeIndex] == testMatrix[methodLine][genomeIndex])// if it's the same Jaccard index or both 0 it's a success
                         {
                                 differentScores[1]++;
                         }
@@ -94,7 +87,7 @@ void ComparisonMatrix::print_vector(vector<double> vectorToPrint)
 {
         for (uint32 position = 0; position < (vectorToPrint.size()); position++)
         {
-                cout << vect[p] << ' ';
+                cout << vectorToPrint[position] << ' ';
         }
         cout << endl;
 }

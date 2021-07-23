@@ -15,10 +15,8 @@
 
 using namespace std;
 
-
-
-
 hash<std::string> kmer_hasher;
+
 
 
 //~~Constructor~~
@@ -35,7 +33,7 @@ void NaiveIndex::add_fasta_for_naive(const string& fileName)
         ifstream theRead(fileName);
         while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
         {
-                NaiveIndex.compute_sketch(get_line_fasta(&theRead), NaiveIndex.kmerSize);
+                compute_sketch(get_line_fasta(&theRead), kmerSize);
         }
         return;
 }
@@ -113,6 +111,11 @@ uint8 NaiveIndex::get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber
         return result;
 }
 
+
+void NaiveIndex::add_sequence(const string& theSequence)
+{
+        add_sketch(compute_sketch(theSequence, kmerSize));
+}
 
 vector<uint8> NaiveIndex::compute_sketch(const string& sequenceStr,const int kmerSize)
 {

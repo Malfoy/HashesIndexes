@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>  // for substr
-#include <unordered_map>  // for Hashtable
+#include <unordered_map>  // for TestTable
 #include <algorithm>  // for sorting
 #include <utility> // for pair
 #include "NaiveIndex.h"
@@ -14,14 +14,13 @@ using namespace std;
 
 
 
-hash<std::string> kmer_hasher;
+
 
 
 
 //~~Constructor~~
-TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(genomeQuantityForTest)
+TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(genomeQuantityForTest), hashTable()
 {
-        unordered_map<string, vector<uint32> > hashTable; // will contains genomes references for every kmer
 }
 
 
@@ -60,15 +59,15 @@ void TestTable::record_sequence(const string& sequenceStr, const uint32 Genome)
                 string kmerToStudy{sequenceStr.substr (position,kmerSize)};
                 if (hashTable.count(kmerToStudy) == 1)
                 {
-                        if (ask_genomes_vector(hashTable[kmerToStudy].second,Genome) == false)
+                        if (ask_genomes_vector(hashTable[kmerToStudy],Genome) == false)
                         {
-                                hashTable[kmerToStudy].second.push_back(Genome);
+                                hashTable[kmerToStudy].push_back(Genome);
                         }
                 }
                 else
                 {
                         //hashTable[kmerToStudy].keptKmer = kmerToStudy;
-                        hashTable[kmerToStudy].second.push_back(Genome);
+                        hashTable[kmerToStudy].push_back(Genome);
                 }
         }
 }
@@ -79,21 +78,22 @@ vector<double> TestTable::query_belonging_genome(const string& sequenceStr, doub
 {
         vector<double> allScores(nbGenomes,0);//vector containing numbers of hit with the number genome for the index
         int sequenceSize(sequenceStr.size()), position(0), kmerSum(sequenceSize - kmerSize);
+        long unsigned int positionGen(0);//this type because it's compared to size()
         for (position = 0; position < (kmerSum); position++) //comparison loop of kmer and select the best result.
         {
                 string kmerToStudy{sequenceStr.substr (position,kmerSize)};
                 if (hashTable.count(kmerToStudy) == 1)
                 {
-                        for (positionGen = 0; positionGen < hashTable[kmerToStudy].second.size(); positionGen++) //browsing of every genome associated with kmer
+                        for (positionGen = 0; positionGen < hashTable[kmerToStudy].size(); positionGen++) //browsing of every genome associated with kmer
                         {
-                                allScores[hashTable[kmerToStudy].second[positionGen]]++; //increment the value at the "genome number" index of vector allScores.
+                                allScores[hashTable[kmerToStudy][positionGen]]++; //increment the value at the "genome number" index of vector allScores.
                         }
                 }
 
         }
         assert(allScores[0] > 0); //to verify if there is the genome 0.
-
-        for (positionGen=0; positionGen < nbGenomes; positionGen++) //browse the vector to transform hits number in Jaccard Index
+        uint32 positionGeno(0);
+        for (positionGeno=0; positionGeno < nbGenomes; positionGeno++) //browse the vector to transform hits number in Jaccard Index
         {
                 allScores[positionGen] = allScores[positionGen]/kmerSum;
         }

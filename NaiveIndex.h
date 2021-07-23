@@ -1,5 +1,5 @@
-#ifndef Index
-#define Index
+#ifndef INDEX
+#define INDEX
 #define NDEBUG  //ASSERT ON TESTTABLE.CPP
 
 #include <stdio.h>
@@ -12,6 +12,7 @@
 #include <bitset>
 #include <stdint.h>
 #include <utility>
+#include <tr1/unordered_map>
 
 // removal '_t'
 typedef int8_t int8;
@@ -27,6 +28,19 @@ typedef uint64_t uint64;
 
 using namespace std;
 
+
+
+
+
+// VECTOR STRUCT ?
+struct  comparison_scores{
+        uint32 studiedGenomeNumber;
+        vector<double> success;
+        vector<double> falsePositive;
+        vector<double> falseNegative;
+        vector<double> tooMuchKmer;
+        vector<double> notEnoughKmer;
+};
 
 
 
@@ -53,7 +67,6 @@ void add_fasta_for_naive(const string& fileName);
 vector<double> query_sequence(const string& sequenceSearched, double acceptanceTreshold = 0);
 void add_sketch(const vector<uint8>& sketchToAdd);
 vector<uint8> compute_sketch(const string& sequenceStr,const int kmerSize);
-uint8 kmer_hasher(const string& str);
 uint64 get_bucket(int64 primaryHash);
 uint8 get_hash(int64 primaryHash);
 uint8 get_minhash(int64 primaryHash);
@@ -71,14 +84,16 @@ public:
 //~~Attributes~~
 int64 kmerSize;
 uint32 nbGenomes;
+std::tr1::unordered_map<string, vector<uint32> > hashTable;
 
 //~~Constructor~~
 TestTable(uint32 genomeQuantityForTest);
 
 //~~Methods~~
+bool ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome);
 void record_sequence(const string& sequenceStr, const uint32 Genome);
 void parse_fasta_for_refTable(const string& fileName);
-vector<pair <uint32, uint32> > query_belonging_genome(const string& sequenceStr);
+vector<double> query_belonging_genome(const string& sequenceStr, double thresholdJaccard);
 };
 
 
@@ -89,7 +104,8 @@ public:
 
 //~~Attribute~~
 uint32 matrixHeight;
-
+vector<vector<double> > testMatrix;
+comparison_scores final_comparison_scores;
 //~~Constructor~~
 ComparisonMatrix();
 
@@ -101,10 +117,8 @@ void show_the_matrix();
 };
 
 
-
-
 //~~Methods~~
 string get_line_fasta(ifstream* partToExamine);
-vector<string> parse_this_fasta(string fastaFile); //??? or void parse_this_fasta(string fastaFile,void (*insertionFunction)(string));
+//vector<string> parse_this_fasta(string fastaFile); //??? or void parse_this_fasta(string fastaFile,void (*insertionFunction)(string));
 
 #endif

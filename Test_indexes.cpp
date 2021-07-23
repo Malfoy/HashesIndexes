@@ -23,11 +23,11 @@ using namespace std;
 int main(int argc, char** argv)
 {
         string theFasta("10Bact.fa");
-        vector<string> allSequences(parse_this_fasta("10Bact.fa"));
-        cout << allSequences[0] << endl;
-        //TestTable refTable(allSequences.size());
-        //NaiveIndex firstIndex(allSequences.size(),8);
-        //for(uint32 sequenceNumber = 0; sequenceNumber < allSequences.size(); sequenceNumber++)
+        //vector<string> allSequences(parse_this_fasta("10Bact.fa"));
+        //cout << allSequences[0] << endl;
+        TestTable refTable(10);
+        NaiveIndex firstIndex(10,8);
+        for(uint32 sequenceNumber = 0; sequenceNumber < 10; sequenceNumber++)
         //{
           //refTable.record_sequence(allSequences[sequenceNumber],sequenceNumber);
           //firstIndex.add_sketch(firstIndex.compute_sketch(allSequences[sequenceNumber], firstIndex.kmerSize));
