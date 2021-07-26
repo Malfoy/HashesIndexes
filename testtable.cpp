@@ -4,7 +4,7 @@
 #include <unordered_map>  // for TestTable
 #include <algorithm>  // for sorting
 #include <utility> // for pair
-#include "NaiveIndex.h"
+#include "TestTable.h"
 #include <cassert> //for assertion
 
 
@@ -98,4 +98,19 @@ vector<double> TestTable::query_belonging_genome(const string& sequenceStr, doub
                 allScores[positionGen] = allScores[positionGen]/kmerSum;
         }
         return allScores;
+}
+
+
+string get_line_fasta(ifstream* partToExamine)
+{
+        string line,justTheSequence;
+        getline(*partToExamine,line);
+        char caracter=partToExamine->peek();
+        while(caracter!='>' and caracter!=EOF) //avoid line with '>' and End Of File
+        {
+                getline(*partToExamine,line);
+                justTheSequence+=line;
+                caracter=partToExamine->peek();
+        }
+        return justTheSequence;
 }

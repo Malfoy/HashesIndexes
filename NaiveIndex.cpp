@@ -183,3 +183,18 @@ vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double
         }
         return allScores;
 }
+
+
+string get_line_fasta(ifstream* partToExamine)
+{
+        string line,justTheSequence;
+        getline(*partToExamine,line);
+        char caracter=partToExamine->peek();
+        while(caracter!='>' and caracter!=EOF) //avoid line with '>' and End Of File
+        {
+                getline(*partToExamine,line);
+                justTheSequence+=line;
+                caracter=partToExamine->peek();
+        }
+        return justTheSequence;
+}

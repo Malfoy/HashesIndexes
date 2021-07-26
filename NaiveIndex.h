@@ -32,18 +32,6 @@ using namespace std;
 
 
 
-// VECTOR STRUCT ?
-struct  comparison_scores{
-        uint32 studiedGenomeNumber;
-        vector<double> success;
-        vector<double> falsePositive;
-        vector<double> falseNegative;
-        vector<double> tooMuchKmer;
-        vector<double> notEnoughKmer;
-};
-
-
-
 /* Produce an index matrix containing a sketch by genome line with the function
    to add sketch and to query a sequence among the genome with a score based
    on jaccard index. */
@@ -74,51 +62,7 @@ uint8 get_hyperloglog(int64 primaryHash);
 uint8 get_popcount(int64 primaryHash);
 uint8 get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber = 62);
 uint8 get_double_hyperloglog(int64 primaryHash);
-};
-
-
-
-class TestTable {
-public:
-
-//~~Attributes~~
-int64 kmerSize;
-uint32 nbGenomes;
-std::tr1::unordered_map<string, vector<uint32> > hashTable;
-
-//~~Constructor~~
-TestTable(uint32 genomeQuantityForTest);
-
-//~~Methods~~
-bool ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome);
-void record_sequence(const string& sequenceStr, const uint32 Genome);
-void parse_fasta_for_refTable(const string& fileName);
-vector<double> query_belonging_genome(const string& sequenceStr, double thresholdJaccard);
-};
-
-
-
-// class about a structure to evaluate results
-class ComparisonMatrix {
-public:
-
-//~~Attribute~~
-uint32 matrixHeight;
-vector<vector<double> > testMatrix;
-comparison_scores final_comparison_scores;
-//~~Constructor~~
-ComparisonMatrix();
-
-//~~Methods~~
-void add_result_vector(vector<double> resultVector);
-void create_comparison();
-void print_vector(vector<double> vectorToPrint);
-void show_the_matrix();
-};
-
-
-//~~Methods~~
 string get_line_fasta(ifstream* partToExamine);
-//vector<string> parse_this_fasta(string fastaFile); //??? or void parse_this_fasta(string fastaFile,void (*insertionFunction)(string));
+};
 
 #endif
