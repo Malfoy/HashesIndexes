@@ -7,7 +7,7 @@ EXEC=Test_indexes
 all: $(EXEC)
 
 
-Test_indexes:   Test_indexes.o NaiveIndex.o testtable.o FastaParser.o EvaluationMaker.o
+Test_indexes:   Test_indexes.o NaiveIndex.o TestTable.o EvaluationMaker.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 NaiveIndex.o: NaiveIndex.cpp
@@ -16,7 +16,7 @@ NaiveIndex.o: NaiveIndex.cpp
 Test_indexes.o: Test_indexes.cpp
 	$(CC) -o $@ -c $< $(CFLAGS)
 
-testtable.o: testtable.cpp
+TestTable.o: TestTable.cpp
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 FastaParser.o: FastaParser.cpp

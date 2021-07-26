@@ -12,6 +12,8 @@
 #include <unordered_set>
 #include <vector>
 #include "NaiveIndex.h"
+#include "EvaluationMaker.h"
+#include "TestTable.h"
 
 
 

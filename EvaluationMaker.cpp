@@ -16,15 +16,6 @@
 using namespace std;
 
 
-// VECTOR STRUCT ?
-struct  Comparison_scores{
-        uint32 studiedGenomeNumber = 0;
-        double success = 0;
-        double falsePositive = 0;
-        double falseNegative = 0;
-        double tooMuchKme = 0;
-        double notEnoughKmer = 0;
-};
 
 
 //~~Constructor~~
@@ -52,10 +43,11 @@ void ComparisonMatrix::add_result_vector(vector<double> resultVector)
 
 //the index of the final_comparison_scores vector (methodLine) indicates the studied program version
 //the index 0 is the "reference results vector" from testtable
-void ComparisonMatrix::create_comparison(uint32 methodLine)
+void ComparisonMatrix::create_comparison()
 {
-        final_comparison_score_vector[methodLine].studiedGenomeNumber = matrixHeight;
+
         long unsigned int methodLine(0);//this type because it's compared to size()
+        final_comparison_score_vector[methodLine].studiedGenomeNumber = matrixHeight;
         uint32 genomeIndex(0);
 
         for (methodLine = 1; methodLine < testMatrix.size(); methodLine++)
@@ -104,10 +96,10 @@ void ComparisonMatrix::show_the_matrix()
         cout << endl << endl <<  "   False positives   ";
         cout << final_comparison_score_vector[methodLine].falsePositive << endl;
         cout << endl << endl <<  "   False negatives   ";
-        cout << final_comparison_score_vector[methodLine].falseNegative) << endl;
+        cout << final_comparison_score_vector[methodLine].falseNegative << endl;
         cout << endl << endl <<  "   with more kmer   ";
-        cout << final_comparison_score_vector[methodLine].tooMuchKmer) << endl;
+        cout << final_comparison_score_vector[methodLine].tooMuchKmer << endl;
         cout << endl << endl <<  "   with less kmer   ";
-        cout << final_comparison_score_vector[methodLine].notEnoughKmer) << endl;
+        cout << final_comparison_score_vector[methodLine].notEnoughKmer << endl;
   }
 }

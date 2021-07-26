@@ -30,6 +30,16 @@ using namespace std;
 
 
 
+struct  Comparison_scores {
+        uint32 studiedGenomeNumber = 0;
+        double success = 0;
+        double falsePositive = 0;
+        double falseNegative = 0;
+        double tooMuchKmer = 0;
+        double notEnoughKmer = 0;
+};
+
+
 
 // class about a structure to evaluate results
 class ComparisonMatrix {
@@ -39,6 +49,7 @@ public:
 uint32 matrixHeight;
 vector<vector<double> > testMatrix;
 vector<Comparison_scores> final_comparison_score_vector;
+
 //~~Constructor~~
 ComparisonMatrix();
 
