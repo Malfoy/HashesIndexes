@@ -1,5 +1,5 @@
-#ifndef INDEX
-#define INDEX
+#ifndef TESTTABLE
+#define TESTTABLE
 #define NDEBUG  //ASSERT ON TESTTABLE.CPP
 
 #include <stdio.h>
@@ -46,7 +46,7 @@ bool ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome);
 void record_sequence(const string& sequenceStr, const uint32 Genome);
 void parse_fasta_for_refTable(const string& fileName);
 vector<double> query_belonging_genome(const string& sequenceStr, double thresholdJaccard);
-string get_line_fasta(ifstream* partToExamine);
+string get_line_fasta_for_testtable(ifstream* partToExamine);
 };
 
 #endif

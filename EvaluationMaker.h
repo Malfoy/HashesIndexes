@@ -1,5 +1,5 @@
-#ifndef INDEX
-#define INDEX
+#ifndef COMPARISON
+#define COMPARISON
 #define NDEBUG  //ASSERT ON TESTTABLE.CPP
 
 #include <stdio.h>
