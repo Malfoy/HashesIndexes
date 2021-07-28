@@ -33,9 +33,24 @@ void NaiveIndex::add_fasta_for_naive(const string& fileName)
         ifstream theRead(fileName);
         while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
         {
-                compute_sketch(get_line_fasta(&theRead), kmerSize);
+                add_sketch(compute_sketch(get_line_fasta_for_naive(&theRead), kmerSize));
         }
         return;
+}
+
+
+string NaiveIndex::get_line_fasta_for_naive(ifstream* partToExamine)
+{
+        string line,justTheSequence;
+        getline(*partToExamine,line);
+        char caracter=partToExamine->peek();
+        while(caracter!='>' and caracter!=EOF) //avoid line with '>' and End Of File
+        {
+                getline(*partToExamine,line);
+                justTheSequence+=line;
+                caracter=partToExamine->peek();
+        }
+        return justTheSequence;
 }
 
 
@@ -112,11 +127,6 @@ uint8 NaiveIndex::get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber
 }
 
 
-void NaiveIndex::add_sequence(const string& theSequence)
-{
-        add_sketch(compute_sketch(theSequence, kmerSize));
-}
-
 vector<uint8> NaiveIndex::compute_sketch(const string& sequenceStr,const int kmerSize)
 {
         vector<uint8> result(nb_minimizer,255); // the resulting vector
@@ -182,19 +192,4 @@ vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double
                 occurentJaccardIndex = 0;
         }
         return allScores;
-}
-
-
-string get_line_fasta(ifstream* partToExamine)
-{
-        string line,justTheSequence;
-        getline(*partToExamine,line);
-        char caracter=partToExamine->peek();
-        while(caracter!='>' and caracter!=EOF) //avoid line with '>' and End Of File
-        {
-                getline(*partToExamine,line);
-                justTheSequence+=line;
-                caracter=partToExamine->peek();
-        }
-        return justTheSequence;
 }

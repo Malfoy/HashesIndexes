@@ -36,6 +36,21 @@ void TestTable::parse_fasta_for_refTable(const string& fileName)
 }
 
 
+string TestTable::get_line_fasta_for_testtable(ifstream* partToExamine)
+{
+        string line,justTheSequence;
+        getline(*partToExamine,line);
+        char caracter=partToExamine->peek();
+        while(caracter!='>' and caracter!=EOF) //avoid line with '>' and End Of File
+        {
+                getline(*partToExamine,line);
+                justTheSequence+=line;
+                caracter=partToExamine->peek();
+        }
+        return justTheSequence;
+}
+
+
 //to find a number (genome here) in a vector
 bool TestTable::ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome)
 {
@@ -98,19 +113,4 @@ vector<double> TestTable::query_belonging_genome(const string& sequenceStr, doub
                 allScores[positionGen] = allScores[positionGen]/kmerSum;
         }
         return allScores;
-}
-
-
-string get_line_fasta_for_testtable(ifstream* partToExamine)
-{
-        string line,justTheSequence;
-        getline(*partToExamine,line);
-        char caracter=partToExamine->peek();
-        while(caracter!='>' and caracter!=EOF) //avoid line with '>' and End Of File
-        {
-                getline(*partToExamine,line);
-                justTheSequence+=line;
-                caracter=partToExamine->peek();
-        }
-        return justTheSequence;
 }

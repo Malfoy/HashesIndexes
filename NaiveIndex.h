@@ -50,7 +50,6 @@ vector<vector<uint8> > matrix; //Column==Buckets line==genomes
 NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb = 256);
 
 //~~Methods~~
-void add_sequence(const string& theSequence);
 void add_fasta_for_naive(const string& fileName);
 vector<double> query_sequence(const string& sequenceSearched, double acceptanceTreshold = 0);
 void add_sketch(const vector<uint8>& sketchToAdd);
@@ -62,7 +61,7 @@ uint8 get_hyperloglog(int64 primaryHash);
 uint8 get_popcount(int64 primaryHash);
 uint8 get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber = 62);
 uint8 get_double_hyperloglog(int64 primaryHash);
-string get_line_fasta(ifstream* partToExamine);
+string get_line_fasta_for_naive(ifstream* partToExamine);
 };
 
 #endif
