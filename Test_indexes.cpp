@@ -28,14 +28,15 @@ int main(int argc, char** argv)
         refTable.parse_fasta_for_refTable(theFasta);
         firstIndex.add_fasta_for_naive(theFasta);
         string otherFasta("10Bact.fa");
-        string oneGenome(firstIndex.get_line_fasta_for_naive(&otherFasta));
+        ifstream oneRead(otherFasta);
+        string oneGenome(firstIndex.get_line_fasta_for_naive(&oneRead));
         ComparisonMatrix firstMatrix;
-        vector<double> TestResultVector(TestTable.query_belonging_genome(oneGenome));
+        vector<double> TestResultVector(refTable.query_belonging_genome(oneGenome));
         vector<double> NaiveResultVector(firstIndex.query_sequence(oneGenome));
         firstMatrix.add_result_vector(TestResultVector);
         firstMatrix.add_result_vector(NaiveResultVector);
         firstMatrix.create_comparison();
         firstMatrix.show_the_matrix();
-        
+
         return 0;
 }

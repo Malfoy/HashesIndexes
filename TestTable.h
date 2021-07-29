@@ -45,7 +45,7 @@ TestTable(uint32 genomeQuantityForTest);
 bool ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome);
 void record_sequence(const string& sequenceStr, const uint32 Genome);
 void parse_fasta_for_refTable(const string& fileName);
-vector<double> query_belonging_genome(const string& sequenceStr, double thresholdJaccard);
+vector<double> query_belonging_genome(const string& sequenceStr, double thresholdJaccard = 0);
 string get_line_fasta_for_testtable(ifstream* partToExamine);
 };
 
