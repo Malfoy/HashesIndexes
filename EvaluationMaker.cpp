@@ -38,6 +38,7 @@ void ComparisonMatrix::add_result_vector(vector<double> resultVector)
                 assert(matrixHeight==resultVector.size());
         }
         testMatrix.push_back(resultVector);
+        final_comparison_score_vector.resize(testMatrix.size());
 }
 
 
@@ -45,11 +46,9 @@ void ComparisonMatrix::add_result_vector(vector<double> resultVector)
 //the index 0 is the "reference results vector" from testtable
 void ComparisonMatrix::create_comparison()
 {
-
         long unsigned int methodLine(0);//this type because it's compared to size()
         final_comparison_score_vector[methodLine].studiedGenomeNumber = matrixHeight;
         uint32 genomeIndex(0);
-
         for (methodLine = 1; methodLine < testMatrix.size(); methodLine++)
         {
                 vector<uint32> differentScores(6);//sum the corresponding result at his category (different score[1] = success score)

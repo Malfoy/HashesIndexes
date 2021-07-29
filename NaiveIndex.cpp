@@ -20,7 +20,7 @@ hash<std::string> kmer_hasher;
 
 
 //~~Constructor~~
-NaiveIndex::NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb) : nb_minimizer(bucketsNumber), nb_genomes(0), decimal_lsb(decimal_for_lsb), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
+NaiveIndex::NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb) : nb_minimizer(bucketsNumber), nb_genomes(2), decimal_lsb(decimal_for_lsb), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
 {
         matrix.resize(bucketsNumber);
 }
