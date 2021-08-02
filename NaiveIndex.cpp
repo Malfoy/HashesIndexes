@@ -136,14 +136,19 @@ vector<uint8> NaiveIndex::compute_sketch(const string& sequenceStr,const int kme
         // of the minimal hash least
 
         int sequenceSize(sequenceStr.size()), position(0);
+        cout << endl << sequenceSize << "  " << " " << nb_minimizer << " " << kmerSize << endl;
 
-        for (position = 0; position < (sequenceSize - kmerSize); position++)
+        for (position = 0; position <= (sequenceSize - kmerSize); position++)
         {
                 string kmerToHash{sequenceStr.substr (position,kmerSize)};
                 int64 hashOfKmer(kmer_hasher(kmerToHash));
+
+                cout << endl << result[get_bucket(hashOfKmer)]<< " puis " << get_hash(hashOfKmer) << endl;
                 if(result[get_bucket(hashOfKmer)] > get_hash(hashOfKmer))
                 {
-                        result[get_bucket(hashOfKmer)] =  get_hash(hashOfKmer);
+                        result[get_bucket(hashOfKmer)] = get_hash(hashOfKmer);
+
+                        cout << endl << "ceci est un test "<< endl;
                 }
         }
 
@@ -163,11 +168,11 @@ void NaiveIndex::add_sketch(const vector<uint8>& sketchToAdd)
 
 vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double acceptanceTreshold)
 {
-        assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);
-        vector<double> allScores(nb_genomes,0);
-        int matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0);
-        vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched, kmerSize));
-        for (int genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the buckets
+        assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
+        vector<double> allScores(nb_genomes,0); //initialize the vector which will contains result
+        int matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0); //different initializing
+        vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched, kmerSize)); //compute sketch the sequence that we searched
+        for (int genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the genome lines
         {
                 for (int bucketX = 0; bucketX < nb_minimizer; bucketX++)//browse the query and genome sketch
                 {
@@ -176,14 +181,18 @@ vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double
                                 if((matrix[bucketX][genomeY]) == vectorisedQuery[bucketX])
                                 {
                                         hitsCounter++;
+                                        cout << endl << "hits counter fonctionne" << endl;
                                 }
                                 else
                                 {
                                         noHitBuckets++; //will participe at Jaccard index calcul
+                                        cout << endl << "noHitBuckets fonctionne" << endl;
                                 }
                         }
                 }
+                cout << endl << hitsCounter << noHitBuckets << endl;
                 double occurentJaccardIndex = hitsCounter/(hitsCounter+noHitBuckets);
+                cout << endl << hitsCounter << noHitBuckets << endl;
                 if(occurentJaccardIndex > acceptanceTreshold) //record occurent score just above the treshold jaccard index
                 {
                         allScores[genomeY] = occurentJaccardIndex;

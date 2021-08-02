@@ -26,7 +26,7 @@ int main(int argc, char** argv)
         cout << endl << "the fasta" << endl;
         TestTable refTable(2);//Don't forget in naive index genome number
         cout << endl << "reftable" << endl;
-        NaiveIndex firstIndex(2,8);
+        NaiveIndex firstIndex(100,8);
         cout << endl << "firstindex" << endl;
         refTable.parse_fasta_for_refTable(theFasta);
         cout << endl << "parse_fasta_for_refTable" << endl;
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
         cout << endl << "otherFasta" << endl;
         ifstream oneRead(otherFasta);
         cout << endl << "oneRead" << endl;
-        string oneGenome("azertyuiopqsdfghjklmwxcvbnbvcxwmlkjhgfdsqpoiuytreza");
+        string oneGenome("azertyuiopqsdfghjklmwxcvbnbvcxw");
         cout << endl << "oneGenome extracted" << endl;
         ComparisonMatrix firstMatrix;
         cout << endl << "firstMatrix" << endl;
