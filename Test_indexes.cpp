@@ -22,11 +22,15 @@
 
 int main(int argc, char** argv)
 {
+        //time
+        std::chrono::time_point<std::chrono::system_clock> start, end;
+        start = std::chrono::system_clock::now();
+
         string theFasta("fastaest.fa");
         cout << endl << "the fasta" << endl;
-        TestTable refTable(2);//Don't forget in naive index genome number
+        TestTable refTable(6);//genomes number
         cout << endl << "reftable" << endl;
-        NaiveIndex firstIndex(100,8);
+        NaiveIndex firstIndex(512,6,8);//((bucketnumbers, genomes number ,bits kept for record))
         cout << endl << "firstindex" << endl;
         refTable.parse_fasta_for_refTable(theFasta);
         cout << endl << "parse_fasta_for_refTable" << endl;
@@ -52,6 +56,10 @@ int main(int argc, char** argv)
         cout << endl << "firstMatrix.create_comparison()" << endl;
         firstMatrix.show_the_matrix();
         cout << endl << "firstMatrix.show_the_matrix()" << endl;
+
+        end = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsedTime(end - start);
+        cout << endl << elapsedTime.count() << " sec" << endl;
 
         return 0;
 }

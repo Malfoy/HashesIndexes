@@ -39,28 +39,28 @@ class NaiveIndex {
 public:
 
 //~~Attributes~~
-int64 nb_minimizer;
-int64 nb_genomes;
+uint64 nb_minimizer;
+uint64 nb_genomes;
 uint16 decimal_lsb;
-int64 bit_to_keep_minimizer;
-int64 kmerSize;
+uint64 bit_to_keep_minimizer;
+uint64 kmerSize;
 vector<vector<uint8> > matrix; //Column==Buckets line==genomes
 
 //~~Constructor~~
-NaiveIndex(int64 bucketsNumber,uint16 decimal_for_lsb = 256);
+NaiveIndex(uint64 bucketsNumber,uint16 nbgenomes,uint16 decimal_for_lsb = 256);
 
 //~~Methods~~
 void add_fasta_for_naive(const string& fileName);
 vector<double> query_sequence(const string& sequenceSearched, double acceptanceTreshold = 0);
 void add_sketch(const vector<uint8>& sketchToAdd);
 vector<uint8> compute_sketch(const string& sequenceStr,const int kmerSize);
-uint64 get_bucket(int64 primaryHash);
-uint8 get_hash(int64 primaryHash);
-uint8 get_minhash(int64 primaryHash);
-uint8 get_hyperloglog(int64 primaryHash);
-uint8 get_popcount(int64 primaryHash);
-uint8 get_hyper_minhashX(int64 primaryHash, uint8 hyperMinhashNumber = 62);
-uint8 get_double_hyperloglog(int64 primaryHash);
+uint64 get_bucket(uint64 primaryHash);
+uint8 get_hash(uint64 primaryHash);
+uint8 get_minhash(uint64 primaryHash);
+uint8 get_hyperloglog(uint64 primaryHash);
+uint8 get_popcount(uint64 primaryHash);
+uint8 get_hyper_minhashX(uint64 primaryHash, uint8 hyperMinhashNumber = 62);
+uint8 get_double_hyperloglog(uint64 primaryHash);
 string get_line_fasta_for_naive(ifstream* partToExamine);
 };
 
