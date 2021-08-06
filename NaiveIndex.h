@@ -51,9 +51,10 @@ NaiveIndex(uint64 bucketsNumber,uint16 nbgenomes,uint16 decimal_for_lsb = 256);
 
 //~~Methods~~
 void add_fasta_for_naive(const string& fileName);
-vector<double> query_sequence(const string& sequenceSearched, double acceptanceTreshold = 0);
+vector<double> query_sequence(const string& sequenceSearchedBeforeComplement, double acceptanceTreshold = 0);
 void add_sketch(const vector<uint8>& sketchToAdd);
-vector<uint8> compute_sketch(const string& sequenceStr,const int kmerSize);
+string get_complement_or_not(const string& sequenceToComplement);
+vector<uint8> compute_sketch(const string& sequenceBeforeComplement,const int kmerSize);
 uint64 get_bucket(uint64 primaryHash);
 uint8 get_hash(uint64 primaryHash);
 uint8 get_minhash(uint64 primaryHash);

@@ -128,8 +128,42 @@ uint8 NaiveIndex::get_hyper_minhashX(uint64 primaryHash, uint8 hyperMinhashNumbe
 }
 
 
-vector<uint8> NaiveIndex::compute_sketch(const string& sequenceStr,const int kmerSize)
+string NaiveIndex::get_complement_or_not(const string& sequenceToComplement)
 {
+  string reverscomp("");
+  for (int i=sequenceToComplement.length()-1; i>=0; i--)
+  {
+     switch (sequenceToComplement[i])
+    {
+      case 'A':
+        reverscomp.append("T");
+        break;
+      case 'T':
+        reverscomp.append("A");
+        break;
+      case 'G':
+        reverscomp.append("C");
+        break;
+      case 'C':
+        reverscomp.append("G");
+        break;
+    }
+  }
+  if(sequenceToComplement < reverscomp)
+  {
+    return sequenceToComplement;
+  }
+  else
+  {
+    return reverscomp;
+  }
+  return 0;
+}
+
+
+vector<uint8> NaiveIndex::compute_sketch(const string& sequenceBeforeComplement,const int kmerSize)
+{
+        string sequenceStr(get_complement_or_not(sequenceBeforeComplement));
         vector<uint8> result(nb_minimizer,(pow(2,decimal_lsb)-1)); // the resulting vector
 
         // a For loop to hash every kmer of a sequence, distribute them in different
@@ -160,8 +194,9 @@ void NaiveIndex::add_sketch(const vector<uint8>& sketchToAdd)
 }
 
 
-vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double acceptanceTreshold)
+vector<double> NaiveIndex::query_sequence(const string& sequenceSearchedBeforeComplement, double acceptanceTreshold)
 {
+        string sequenceSearched(get_complement_or_not(sequenceSearchedBeforeComplement));
         assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
         vector<double> allScores(nb_genomes,0); //initialize the vector which will contains result
         uint matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0); //different initializing
