@@ -40,7 +40,7 @@ int main(int argc, char** argv)
         cout << endl << "otherFasta" << endl;
         ifstream oneRead(otherFasta);
         cout << endl << "oneRead" << endl;
-        string oneGenome("azertyuiopqsdfghjklmwxcvbnbvcxw");
+        string oneGenome("atgggcgggcgggcggggctttattagctga");
         cout << endl << "oneGenome extracted" << endl;
         ComparisonMatrix firstMatrix;
         cout << endl << "firstMatrix" << endl;

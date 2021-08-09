@@ -135,16 +135,16 @@ string NaiveIndex::get_complement_or_not(const string& sequenceToComplement)
   {
      switch (sequenceToComplement[i])
     {
-      case 'A':
+      case 'A': case 'a':
         reverscomp.append("T");
         break;
-      case 'T':
+      case 'T': case 't':
         reverscomp.append("A");
         break;
-      case 'G':
+      case 'G': case 'g':
         reverscomp.append("C");
         break;
-      case 'C':
+      case 'C': case 'c':
         reverscomp.append("G");
         break;
     }
@@ -157,7 +157,6 @@ string NaiveIndex::get_complement_or_not(const string& sequenceToComplement)
   {
     return reverscomp;
   }
-  return 0;
 }
 
 
