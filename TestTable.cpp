@@ -25,6 +25,9 @@ TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(gen
 
 
 //~~Methods~~
+
+//  ~~Public~~
+
 void TestTable::parse_fasta_for_refTable(const string& fileName)
 {
         ifstream theRead(fileName);
@@ -35,6 +38,38 @@ void TestTable::parse_fasta_for_refTable(const string& fileName)
         return;
 }
 
+
+vector<double> TestTable::query_belonging_genome(const string& sequenceStr, double thresholdJaccard)
+{
+        vector<double> allScores(nbGenomes,0);//vector containing numbers of hit with the number genome for the index
+        int sequenceSize(sequenceStr.size()), position(0), kmerSum(sequenceSize - kmerSize);
+        long unsigned int positionGen(0);//this type because it's compared to size()
+        for (position = 0; position < (kmerSum); position++) //comparison loop of kmer and select the best result.
+        {
+                string kmerToStudy{sequenceStr.substr (position,kmerSize)};
+                if (hashTable.count(kmerToStudy) == 1)
+                {
+                        for (positionGen = 0; positionGen < hashTable[kmerToStudy].size(); positionGen++) //browsing of every genome associated with kmer
+                        {
+                                allScores[hashTable[kmerToStudy][positionGen]]++; //increment the value at the "genome number" index of vector allScores.
+                        }
+                }
+
+        }
+        assert(allScores[0] > 0); //to verify if there is the genome 0.
+        uint32 positionGeno(0);
+        for (positionGeno=0; positionGeno < nbGenomes; positionGeno++) //browse the vector to transform hits number in Jaccard Index
+        {
+                allScores[positionGen] = allScores[positionGen]/kmerSum;
+        }
+        return allScores;
+}
+
+
+
+
+
+//  ~~Private~~
 
 string TestTable::get_line_fasta_for_testtable(ifstream* partToExamine)
 {
@@ -48,20 +83,6 @@ string TestTable::get_line_fasta_for_testtable(ifstream* partToExamine)
                 caracter=partToExamine->peek();
         }
         return justTheSequence;
-}
-
-
-//to find a number (genome here) in a vector
-bool TestTable::ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome)
-{
-        if (genomesVector.back() == wantedGenome)
-        {
-                return true;
-        }
-        else
-        {
-                return false;
-        }
 }
 
 
@@ -89,28 +110,15 @@ void TestTable::record_sequence(const string& sequenceStr, const uint32 Genome)
 
 
 
-vector<double> TestTable::query_belonging_genome(const string& sequenceStr, double thresholdJaccard)
-{
-        vector<double> allScores(nbGenomes,0);//vector containing numbers of hit with the number genome for the index
-        int sequenceSize(sequenceStr.size()), position(0), kmerSum(sequenceSize - kmerSize);
-        long unsigned int positionGen(0);//this type because it's compared to size()
-        for (position = 0; position < (kmerSum); position++) //comparison loop of kmer and select the best result.
-        {
-                string kmerToStudy{sequenceStr.substr (position,kmerSize)};
-                if (hashTable.count(kmerToStudy) == 1)
-                {
-                        for (positionGen = 0; positionGen < hashTable[kmerToStudy].size(); positionGen++) //browsing of every genome associated with kmer
-                        {
-                                allScores[hashTable[kmerToStudy][positionGen]]++; //increment the value at the "genome number" index of vector allScores.
-                        }
-                }
 
-        }
-        assert(allScores[0] > 0); //to verify if there is the genome 0.
-        uint32 positionGeno(0);
-        for (positionGeno=0; positionGeno < nbGenomes; positionGeno++) //browse the vector to transform hits number in Jaccard Index
+bool TestTable::ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome)
+{
+        if (genomesVector.back() == wantedGenome)
         {
-                allScores[positionGen] = allScores[positionGen]/kmerSum;
+                return true;
         }
-        return allScores;
+        else
+        {
+                return false;
+        }
 }

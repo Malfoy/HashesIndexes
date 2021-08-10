@@ -42,11 +42,15 @@ std::tr1::unordered_map<string, vector<uint32> > hashTable;
 TestTable(uint32 genomeQuantityForTest);
 
 //~~Methods~~
-bool ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome);
-void record_sequence(const string& sequenceStr, const uint32 Genome);
+//    ~~public~~
 void parse_fasta_for_refTable(const string& fileName);
 vector<double> query_belonging_genome(const string& sequenceStr, double thresholdJaccard = 0);
+
+//    ~~private~~
 string get_line_fasta_for_testtable(ifstream* partToExamine);
+void record_sequence(const string& sequenceStr, const uint32 Genome);
+
+  bool ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome); //to find a number (genome here) in a vector
 };
 
 #endif

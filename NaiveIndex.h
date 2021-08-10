@@ -38,6 +38,7 @@ using namespace std;
 class NaiveIndex {
 public:
 
+
 //~~Attributes~~
 uint64 nb_minimizer;
 uint64 nb_genomes;
@@ -46,23 +47,33 @@ uint64 bit_to_keep_minimizer;
 uint64 kmerSize;
 vector<vector<uint8> > matrix; //Column==Buckets line==genomes
 
+
 //~~Constructor~~
 NaiveIndex(uint64 bucketsNumber,uint16 nbgenomes,uint16 decimal_for_lsb = 256);
 
+
 //~~Methods~~
-void add_fasta_for_naive(const string& fileName);
+//    ~~public~~
+void index_sequences_from_fasta(const string& fileName);
 vector<double> query_sequence(const string& sequenceSearchedBeforeComplement, double acceptanceTreshold = 0);
-void add_sketch(const vector<uint8>& sketchToAdd);
-string get_complement_or_not(const string& sequenceToComplement);
+
+//    ~~private~~
+string get_line_fasta_for_naive(ifstream* partToExamine);
 vector<uint8> compute_sketch(const string& sequenceBeforeComplement,const int kmerSize);
-uint64 get_bucket(uint64 primaryHash);
-uint8 get_hash(uint64 primaryHash);
-uint8 get_minhash(uint64 primaryHash);
+void add_sketch(const vector<uint8>& sketchToAdd);
+
+  string get_complement_or_not(const string& sequenceToComplement);
+  uint64 get_bucket(uint64 primaryHash);
+  uint8 get_hash(uint64 primaryHash);
+
+    uint8 get_minhash(uint64 primaryHash);
+
+//    ~~alternative~~
 uint8 get_hyperloglog(uint64 primaryHash);
+uint64 xs(uint64 y);
 uint8 get_popcount(uint64 primaryHash);
 uint8 get_hyper_minhashX(uint64 primaryHash, uint8 hyperMinhashNumber = 62);
 uint8 get_double_hyperloglog(uint64 primaryHash);
-string get_line_fasta_for_naive(ifstream* partToExamine);
 };
 
 #endif

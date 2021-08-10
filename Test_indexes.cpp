@@ -34,7 +34,7 @@ int main(int argc, char** argv)
         cout << endl << "firstindex" << endl;
         refTable.parse_fasta_for_refTable(theFasta);
         cout << endl << "parse_fasta_for_refTable" << endl;
-        firstIndex.add_fasta_for_naive(theFasta);
+        firstIndex.index_sequences_from_fasta(theFasta);
         cout << endl << "add_fasta_for_naive" << endl;
         string otherFasta("fastest.fa");
         cout << endl << "otherFasta" << endl;
