@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <bitset>
+#include<bits/stdc++.h>
 #include <iostream>
 #include <vector>
 #include <atomic>  // to isolate the calcul thread
@@ -79,6 +80,30 @@ vector<double> NaiveIndex::query_sequence(const string& sequenceSearchedBeforeCo
                 occurentJaccardIndex = 0;
         }
         return allScores;
+}
+
+
+vector<pair<double,uint16>> NaiveIndex::sort_scores(vector<double> allScoresVector)
+{
+  vector<pair<double,uint16>> sortedScoresVector;
+  for (uint genomeCursor = 0; genomeCursor < allScoresVector.size(); genomeCursor++)
+  {
+        sortedScoresVector.push_back(make_pair(allScoresVector[genomeCursor],genomeCursor));
+  }
+  sort (sortedScoresVector.rbegin(), sortedScoresVector.rend()); //rbegin (and rend) for descending else it would be begin
+  return sortedScoresVector;
+}
+
+
+void NaiveIndex::show_sorted_scores(vector<pair<double,uint16>> sortedScoresVector)
+{
+  cout << "  ~    SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
+  cout << "Jccrd Idx"<< "    " << "Genome number" << endl;
+  for (uint positionScore = 0; positionScore < sortedScoresVector.size(); positionScore++)
+  {
+    cout << sortedScoresVector[positionScore].first << "        " << sortedScoresVector[positionScore].second << endl;
+  }
+return;
 }
 
 

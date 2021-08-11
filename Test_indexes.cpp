@@ -48,6 +48,14 @@ int main(int argc, char** argv)
         cout << endl << "TestResultVector" << endl;
         vector<double> NaiveResultVector(firstIndex.query_sequence(oneGenome));
         cout << endl << "NaiveResultVector" << endl;
+        NaiveResultVector.push_back(0.3);
+        NaiveResultVector.push_back(0.8);
+        NaiveResultVector.push_back(0.3);
+        NaiveResultVector.push_back(0.4);
+        vector<pair<double,uint16>> sortedVector(firstIndex.sort_scores(NaiveResultVector));
+        cout << endl << "sort vector" << endl;
+        firstIndex.show_sorted_scores(sortedVector);
+        cout << endl << "show sorted vector" << endl;
         firstMatrix.add_result_vector(TestResultVector);
         cout << endl << "firstMatrix.add_result_vector(TestResultVector)" << endl;
         firstMatrix.add_result_vector(NaiveResultVector);
