@@ -28,9 +28,9 @@ int main(int argc, char** argv)
 
         string theFasta("fastaest.fa");
         cout << endl << "the fasta" << endl;
-        TestTable refTable(6);//genomes number
+        TestTable refTable(3);//genomes number
         cout << endl << "reftable" << endl;
-        NaiveIndex firstIndex(512,6,8);//((bucketnumbers, genomes number ,bits kept for record))
+        NaiveIndex firstIndex(512,3,8);//((bucketnumbers, genomes number ,bits kept for record))
         cout << endl << "firstindex" << endl;
         refTable.parse_fasta_for_refTable(theFasta);
         cout << endl << "parse_fasta_for_refTable" << endl;
@@ -48,10 +48,6 @@ int main(int argc, char** argv)
         cout << endl << "TestResultVector" << endl;
         vector<double> NaiveResultVector(firstIndex.query_sequence(oneGenome));
         cout << endl << "NaiveResultVector" << endl;
-        NaiveResultVector.push_back(0.3);
-        NaiveResultVector.push_back(0.8);
-        NaiveResultVector.push_back(0.3);
-        NaiveResultVector.push_back(0.4);
         vector<pair<double,uint16>> sortedVector(firstIndex.sort_scores(NaiveResultVector));
         cout << endl << "sort vector" << endl;
         firstIndex.show_sorted_scores(sortedVector);

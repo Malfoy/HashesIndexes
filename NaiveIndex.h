@@ -61,10 +61,10 @@ void show_sorted_scores(vector<pair<double,uint16>> sortedScoresVector);
 
 //    ~~private~~
 string get_line_fasta_for_naive(ifstream* partToExamine);
-vector<uint8> compute_sketch(const string& sequenceBeforeComplement,const int kmerSize);
+vector<uint8> compute_sketch(const string& sequenceSearched,const int kmerSize);
 void add_sketch(const vector<uint8>& sketchToAdd);
 
-  string get_complement_or_not(const string& sequenceToComplement);
+  string get_complement_or_not(string sequenceToComplement);
   uint64 get_bucket(uint64 primaryHash);
   uint8 get_hash(uint64 primaryHash);
 

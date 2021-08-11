@@ -48,9 +48,8 @@ void NaiveIndex::index_sequences_from_fasta(const string& fileName)
 }
 
 
-vector<double> NaiveIndex::query_sequence(const string& sequenceSearchedBeforeComplement, double acceptanceTreshold)
+vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double acceptanceTreshold)
 {
-        string sequenceSearched(get_complement_or_not(sequenceSearchedBeforeComplement));
         assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
         vector<double> allScores(nb_genomes,0); //initialize the vector which will contains result
         uint matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0); //different initializing
@@ -98,10 +97,10 @@ vector<pair<double,uint16>> NaiveIndex::sort_scores(vector<double> allScoresVect
 void NaiveIndex::show_sorted_scores(vector<pair<double,uint16>> sortedScoresVector)
 {
   cout << "  ~    SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
-  cout << "Jccrd Idx"<< "    " << "Genome number" << endl;
+  cout << "Jccrd Idx"<< "     " << "Genome number" << endl;
   for (uint positionScore = 0; positionScore < sortedScoresVector.size(); positionScore++)
   {
-    cout << sortedScoresVector[positionScore].first << "        " << sortedScoresVector[positionScore].second << endl;
+    cout << sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl;
   }
 return;
 }
@@ -145,6 +144,14 @@ vector<uint8> NaiveIndex::compute_sketch(const string& sequenceBeforeComplement,
                         result[get_bucket(hashOfKmer)] = get_hash(hashOfKmer);
                 }
         }
+        for (uint positionScore = 0; positionScore < result.size(); positionScore++)
+        {
+          cout << (uint) result[positionScore] << " ";
+          if (positionScore%32 == 0 && positionScore != 0)
+          {
+            cout << endl;
+          }
+        }
         return result;
 }
 
@@ -161,33 +168,51 @@ void NaiveIndex::add_sketch(const vector<uint8>& sketchToAdd)
 
 
 
-string NaiveIndex::get_complement_or_not(const string& sequenceToComplement)
+string NaiveIndex::get_complement_or_not(string sequenceToComplement)
 {
   string reverscomp("");
   for (int i=sequenceToComplement.length()-1; i>=0; i--)
   {
      switch (sequenceToComplement[i])
     {
-      case 'A': case 'a':
+
+      case 'A':
         reverscomp.append("T");
         break;
-      case 'T': case 't':
+      case 'T':
         reverscomp.append("A");
         break;
-      case 'G': case 'g':
+      case 'G':
         reverscomp.append("C");
         break;
-      case 'C': case 'c':
+      case 'C':
         reverscomp.append("G");
+        break;
+      case 'a':
+        replace(sequenceToComplement.begin(),sequenceToComplement.end(),'a','A');
+        reverscomp.append("T");
+        break;
+      case 'c':
+        replace(sequenceToComplement.begin(),sequenceToComplement.end(),'c','C');
+        reverscomp.append("G");
+        break;
+      case 'g':
+        replace(sequenceToComplement.begin(),sequenceToComplement.end(),'g','G');
+        reverscomp.append("C");
+        break;
+      case 't':
+        replace(sequenceToComplement.begin(),sequenceToComplement.end(),'t','T');
+        reverscomp.append("A");
         break;
     }
   }
+
   if(sequenceToComplement < reverscomp)
-  {
+  {cout << sequenceToComplement << "   seqcanonique" << endl;
     return sequenceToComplement;
   }
   else
-  {
+  {cout << reverscomp << "    seqrevcompl" << endl;
     return reverscomp;
   }
 }
