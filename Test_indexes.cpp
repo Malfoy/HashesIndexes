@@ -30,7 +30,7 @@ int main(int argc, char** argv)
         cout << endl << "the fasta" << endl;
         TestTable refTable(3);//genomes number
         cout << endl << "reftable" << endl;
-        NaiveIndex firstIndex(512,3,8);//((bucketnumbers, genomes number ,bits kept for record))
+        NaiveIndex firstIndex(512,3,256);//((bucketnumbers, genomes number ,bits kept for record))
         cout << endl << "firstindex" << endl;
         refTable.parse_fasta_for_refTable(theFasta);
         cout << endl << "parse_fasta_for_refTable" << endl;

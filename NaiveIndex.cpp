@@ -25,7 +25,7 @@ hash<std::string> kmer_hasher;
 
 //~~Constructor~~
 
-NaiveIndex::NaiveIndex(uint64 bucketsNumber,uint16 nbgenomes,uint16 decimal_for_lsb) : nb_minimizer(bucketsNumber), nb_genomes(nbgenomes), decimal_lsb(decimal_for_lsb), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
+NaiveIndex::NaiveIndex(uint64 bucketsNumber,uint16 nbgenomes,uint16 decimal_for_lsb) : nb_minimizer(bucketsNumber), nb_genomes(nbgenomes), decimal_lsb(decimal_for_lsb), number_of_LSB(log2(decimal_for_lsb)), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
 {
         matrix.resize(bucketsNumber);
 }
@@ -127,9 +127,9 @@ string NaiveIndex::get_line_fasta_for_naive(ifstream* partToExamine)
 
 
 vector<uint8> NaiveIndex::compute_sketch(const string& sequenceBeforeComplement,const int kmerSize)
-{
+{cout << decimal_lsb << " " << number_of_LSB << " " << pow(2,number_of_LSB)-1 << endl;
         string sequenceStr(get_complement_or_not(sequenceBeforeComplement));
-        vector<uint8> result(nb_minimizer,(pow(2,decimal_lsb)-1)); // the resulting vector
+        vector<uint8> result(nb_minimizer,(pow(2,number_of_LSB)-1)); // the resulting vector
         int sequenceSize(sequenceStr.size()), position(0);
 
         /* a For loop to hash every kmer of a sequence, distribute them in

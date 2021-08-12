@@ -42,7 +42,8 @@ public:
 //~~Attributes~~
 uint64 nb_minimizer;
 uint64 nb_genomes;
-uint16 decimal_lsb;
+uint64 decimal_lsb;
+uint64 number_of_LSB;
 uint64 bit_to_keep_minimizer;
 uint64 kmerSize;
 vector<vector<uint8> > matrix; //Column==Buckets line==genomes
