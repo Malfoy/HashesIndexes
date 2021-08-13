@@ -43,7 +43,7 @@ void NaiveIndex::index_sequences_from_fasta(const string& fileName)
         while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
         {
                 nb_genomes++;
-                add_sketch(compute_sketch(get_line_fasta_for_naive(&theRead), kmerSize));
+                add_sketch(compute_sketch(get_line_fasta_for_naive(&theRead)));
         }
 }
 
@@ -53,7 +53,7 @@ vector<double> NaiveIndex::query_sequence(string sequenceSearchedBeforeComplemen
         assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
         vector<double> allScores(nb_genomes,0); //initialize the vector which will contains result
         uint matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0); //different initializing
-        vector<uint8> vectorisedQuery(compute_sketch(sequenceSearchedBeforeComplement, kmerSize)); //compute sketch the sequence that we searched
+        vector<uint8> vectorisedQuery(compute_sketch(sequenceSearchedBeforeComplement)); //compute sketch the sequence that we searched
         for (uint genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the genome lines
         {
                 for (uint bucketX = 0; bucketX < nb_minimizer; bucketX++)//browse the query and genome sketch
@@ -131,11 +131,11 @@ string NaiveIndex::get_line_fasta_for_naive(ifstream* partToExamine)
 }
 
 
-vector<uint8> NaiveIndex::compute_sketch(string sequenceStrBeforeComplement,const int kmerSize)
+vector<uint8> NaiveIndex::compute_sketch(string sequenceStrBeforeComplement)
 {
         string sequenceStr(get_complement_or_not(sequenceStrBeforeComplement));
         vector<uint8> result(nb_minimizer,(pow(2,number_of_LSB)-1)); // the resulting vector
-        int sequenceSize(sequenceStr.size()), position(0);
+        uint sequenceSize(sequenceStr.size()), position(0);
 
         /* a For loop to hash every kmer of a sequence, distribute them in
         different bucket with their MSB on one byte (255 buckets) and record

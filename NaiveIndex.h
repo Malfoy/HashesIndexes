@@ -62,7 +62,7 @@ void show_sorted_scores(vector<pair<double,uint16>> sortedScoresVector, uint how
 
 //    ~~private~~
 string get_line_fasta_for_naive(ifstream* partToExamine);
-vector<uint8> compute_sketch(string sequenceStrBeforeComplement,const int kmerSize);
+vector<uint8> compute_sketch(string sequenceStrBeforeComplement);
 void add_sketch(const vector<uint8>& sketchToAdd);
 
   string get_complement_or_not(string sequenceToComplement);
