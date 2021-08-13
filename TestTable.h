@@ -39,7 +39,7 @@ uint32 nbGenomes;
 std::tr1::unordered_map<string, vector<uint32> > hashTable;
 
 //~~Constructor~~
-TestTable(uint32 genomeQuantityForTest);
+TestTable(uint32 genomeQuantityForTest = 0);
 
 //~~Methods~~
 //    ~~public~~

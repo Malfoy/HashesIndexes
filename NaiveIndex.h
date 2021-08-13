@@ -50,19 +50,19 @@ vector<vector<uint8> > matrix; //Column==Buckets line==genomes
 
 
 //~~Constructor~~
-NaiveIndex(uint64 bucketsNumber,uint16 nbgenomes,uint16 decimal_for_lsb = 256);
+NaiveIndex(uint64 bucketsNumber,uint16 decimal_for_lsb = 256,uint16 nbgenomes = 0);
 
 
 //~~Methods~~
 //    ~~public~~
 void index_sequences_from_fasta(const string& fileName);
-vector<double> query_sequence(const string& sequenceSearchedBeforeComplement, double acceptanceTreshold = 0);
+vector<double> query_sequence(string sequenceSearchedBeforeComplement, double acceptanceTreshold = 0);
 vector<pair<double,uint16>> sort_scores(vector<double> allScoresVector);
 void show_sorted_scores(vector<pair<double,uint16>> sortedScoresVector, uint howManyScoresToShow = 0);
 
 //    ~~private~~
 string get_line_fasta_for_naive(ifstream* partToExamine);
-vector<uint8> compute_sketch(const string& sequenceSearched,const int kmerSize);
+vector<uint8> compute_sketch(string sequenceStrBeforeComplement,const int kmerSize);
 void add_sketch(const vector<uint8>& sketchToAdd);
 
   string get_complement_or_not(string sequenceToComplement);

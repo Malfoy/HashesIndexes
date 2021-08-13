@@ -31,11 +31,10 @@ TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(gen
 void TestTable::parse_fasta_for_refTable(const string& fileName)
 {
         ifstream theRead(fileName);
-        uint16 genomeNumber(0);
         while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
         {
-                record_sequence(get_line_fasta_for_testtable(&theRead),genomeNumber);
-                genomeNumber++;
+                record_sequence(get_line_fasta_for_testtable(&theRead),nbGenomes);
+                nbGenomes++;
         }
 }
 

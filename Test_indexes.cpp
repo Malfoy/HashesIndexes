@@ -28,24 +28,22 @@ int main(int argc, char** argv)
 
         string theFasta("fastaest.fa");
         cout << endl << "the fasta" << endl;
-        TestTable refTable(3);//genomes number
+        TestTable refTable;
         cout << endl << "reftable" << endl;
-        NaiveIndex firstIndex(512,3,256);//((bucketnumbers, genomes number ,bits kept for record))
+        NaiveIndex firstIndex(512,256);//((bucketnumbers, binary decimal (2,4,8...1024...) for record))
         cout << endl << "firstindex" << endl;
         refTable.parse_fasta_for_refTable(theFasta);
         cout << endl << "parse_fasta_for_refTable" << endl;
         firstIndex.index_sequences_from_fasta(theFasta);
         cout << endl << "add_fasta_for_naive" << endl;
-        string otherFasta("fastest.fa");
-        cout << endl << "otherFasta" << endl;
-        ifstream oneRead(otherFasta);
-        cout << endl << "oneRead" << endl;
-        string oneGenome("atgggcgggcgggcggggctttattagctga");
-        cout << endl << "oneGenome extracted" << endl;
+        string oneGenome("gctgccgtcgtcgtcgtcggctggtcgtcgt");
         ComparisonMatrix firstMatrix;
         cout << endl << "firstMatrix" << endl;
         vector<double> TestResultVector(refTable.query_belonging_genome(oneGenome));
         cout << endl << "TestResultVector" << endl;
+        vector<pair<double,uint16>> sortedVectorTest(refTable.sort_scores(TestResultVector));
+        cout << endl << "sort vector test" << endl;
+        refTable.show_sorted_scores(sortedVectorTest);
         vector<double> NaiveResultVector(firstIndex.query_sequence(oneGenome));
         cout << endl << "NaiveResultVector" << endl;
         vector<pair<double,uint16>> sortedVector(firstIndex.sort_scores(NaiveResultVector));

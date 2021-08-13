@@ -25,7 +25,7 @@ hash<std::string> kmer_hasher;
 
 //~~Constructor~~
 
-NaiveIndex::NaiveIndex(uint64 bucketsNumber,uint16 nbgenomes,uint16 decimal_for_lsb) : nb_minimizer(bucketsNumber), nb_genomes(nbgenomes), decimal_lsb(decimal_for_lsb), number_of_LSB(log2(decimal_for_lsb)), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
+NaiveIndex::NaiveIndex(uint64 bucketsNumber,uint16 decimal_for_lsb,uint16 nbgenomes) : nb_minimizer(bucketsNumber), nb_genomes(nbgenomes), decimal_lsb(decimal_for_lsb), number_of_LSB(log2(decimal_for_lsb)), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
 {
         matrix.resize(bucketsNumber);
 }
@@ -42,22 +42,23 @@ void NaiveIndex::index_sequences_from_fasta(const string& fileName)
         ifstream theRead(fileName);
         while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
         {
+                nb_genomes++;
                 add_sketch(compute_sketch(get_line_fasta_for_naive(&theRead), kmerSize));
         }
 }
 
 
-vector<double> NaiveIndex::query_sequence(const string& sequenceSearched, double acceptanceTreshold)
+vector<double> NaiveIndex::query_sequence(string sequenceSearchedBeforeComplement, double acceptanceTreshold)
 {
         assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
         vector<double> allScores(nb_genomes,0); //initialize the vector which will contains result
         uint matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0); //different initializing
-        vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched, kmerSize)); //compute sketch the sequence that we searched
+        vector<uint8> vectorisedQuery(compute_sketch(sequenceSearchedBeforeComplement, kmerSize)); //compute sketch the sequence that we searched
         for (uint genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the genome lines
         {
                 for (uint bucketX = 0; bucketX < nb_minimizer; bucketX++)//browse the query and genome sketch
                 {
-                        if(vectorisedQuery[bucketX] != 255) //because we don't want record unsignificant bucket
+                        if(vectorisedQuery[bucketX] != (decimal_lsb - 1)) //because we don't want record unsignificant bucket, by defaut 255
                         {
                                 if((matrix[bucketX][genomeY]) == vectorisedQuery[bucketX])
                                 {
@@ -130,9 +131,9 @@ string NaiveIndex::get_line_fasta_for_naive(ifstream* partToExamine)
 }
 
 
-vector<uint8> NaiveIndex::compute_sketch(const string& sequenceBeforeComplement,const int kmerSize)
+vector<uint8> NaiveIndex::compute_sketch(string sequenceStrBeforeComplement,const int kmerSize)
 {
-        string sequenceStr(get_complement_or_not(sequenceBeforeComplement));
+        string sequenceStr(get_complement_or_not(sequenceStrBeforeComplement));
         vector<uint8> result(nb_minimizer,(pow(2,number_of_LSB)-1)); // the resulting vector
         int sequenceSize(sequenceStr.size()), position(0);
 
@@ -154,6 +155,8 @@ vector<uint8> NaiveIndex::compute_sketch(const string& sequenceBeforeComplement,
 
 void NaiveIndex::add_sketch(const vector<uint8>& sketchToAdd)
 {
+
+
         int sketchSize(sketchToAdd.size());
         for (int position = 0; position < sketchSize; position++)
         {
