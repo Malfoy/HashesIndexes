@@ -44,9 +44,9 @@ TestTable(uint32 genomeQuantityForTest = 0);
 //~~Methods~~
 //    ~~public~~
 void parse_fasta_for_refTable(const string& fileName);
-vector<double> query_belonging_genome(string sequenceStrbeforeComplement, double thresholdJaccard = 0);
-vector<pair<double,uint16>> sort_scores(vector<double> allScoresVector);
-void show_sorted_scores(vector<pair<double,uint16>> sortedScoresVector, uint howManyScoresToShow = 0);
+vector<long double> query_belonging_genome(string sequenceStrbeforeComplement, long double thresholdJaccard = 0);
+vector<pair<long double,uint16>> sort_scores(vector<long double> allScoresVector);
+void show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow = 0);
 
 //    ~~private~~
 string get_line_fasta_for_testtable(ifstream* partToExamine);

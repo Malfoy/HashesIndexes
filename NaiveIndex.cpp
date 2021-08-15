@@ -48,10 +48,10 @@ void NaiveIndex::index_sequences_from_fasta(const string& fileName)
 }
 
 
-vector<double> NaiveIndex::query_sequence(string sequenceSearchedBeforeComplement, double acceptanceTreshold)
+vector<long double> NaiveIndex::query_sequence(string sequenceSearchedBeforeComplement, long double acceptanceTreshold)
 {
         assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
-        vector<double> allScores(nb_genomes,0); //initialize the vector which will contains result
+        vector<long double> allScores(nb_genomes,0); //initialize the vector which will contains result
         uint matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0); //different initializing
         vector<uint8> vectorisedQuery(compute_sketch(sequenceSearchedBeforeComplement)); //compute sketch the sequence that we searched
         for (uint genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the genome lines
@@ -70,8 +70,8 @@ vector<double> NaiveIndex::query_sequence(string sequenceSearchedBeforeComplemen
                                 }
                         }
                 }
-                double occurentJaccardIndex = hitsCounter/(hitsCounter+noHitBuckets);
-                if(occurentJaccardIndex > acceptanceTreshold) //record occurent score just above the treshold jaccard index
+                long double occurentJaccardIndex = (long double) hitsCounter/(hitsCounter+noHitBuckets);
+                if(occurentJaccardIndex >= acceptanceTreshold) //record occurent score just above the treshold jaccard index
                 {
                         allScores[genomeY] = occurentJaccardIndex;
                 }
@@ -83,9 +83,9 @@ vector<double> NaiveIndex::query_sequence(string sequenceSearchedBeforeComplemen
 }
 
 
-vector<pair<double,uint16>> NaiveIndex::sort_scores(vector<double> allScoresVector)
+vector<pair<long double,uint16>> NaiveIndex::sort_scores(vector<long double> allScoresVector)
 {
-  vector<pair<double,uint16>> sortedScoresVector;
+  vector<pair<long double,uint16>> sortedScoresVector;
   for (uint genomeCursor = 0; genomeCursor < allScoresVector.size(); genomeCursor++)
   {
         sortedScoresVector.push_back(make_pair(allScoresVector[genomeCursor],genomeCursor));
@@ -95,7 +95,7 @@ vector<pair<double,uint16>> NaiveIndex::sort_scores(vector<double> allScoresVect
 }
 
 
-void NaiveIndex::show_sorted_scores(vector<pair<double,uint16>> sortedScoresVector, uint howManyScoresToShow) // 0 mean all scores
+void NaiveIndex::show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow) // 0 mean all scores
 {
   cout << "  ~    SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
   cout << "Jccrd Idx"<< "     " << "Genome number" << endl;
@@ -106,7 +106,7 @@ void NaiveIndex::show_sorted_scores(vector<pair<double,uint16>> sortedScoresVect
   }
   for (uint positionScore = 0; positionScore < limitNumber; positionScore++)
   {
-    cout << (uint) sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl;
+    cout << sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl;
   }
 }
 

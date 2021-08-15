@@ -39,13 +39,13 @@ void TestTable::parse_fasta_for_refTable(const string& fileName)
 }
 
 
-vector<double> TestTable::query_belonging_genome(string sequenceStrbeforeComplement, double thresholdJaccard)
+vector<long double> TestTable::query_belonging_genome(string sequenceStrbeforeComplement, long double thresholdJaccard)
 {
         string sequenceStr(get_complement_or_not(sequenceStrbeforeComplement));
-        vector<double> allScores(nbGenomes,0);//vector containing numbers of hit with the number genome for the index
-        int sequenceSize(sequenceStr.size()), position(0), kmerSum(sequenceSize - kmerSize);
+        vector<long double> allScores(nbGenomes,0);//vector containing numbers of hit with the number genome for the index
+        int sequenceSize(sequenceStr.size()), position(0), kmerSum(sequenceSize - kmerSize + 1);
         long unsigned int positionGen(0);//this type because it's compared to size()
-        for (position = 0; position <= (kmerSum); position++) //comparison loop of kmer and select the best result.
+        for (position = 0; position < (kmerSum); position++) //comparison loop of kmer and select the best result.
         {
                 string kmerToStudy{sequenceStr.substr (position,kmerSize)};
                 if (hashTable.count(kmerToStudy) == 1)
@@ -55,21 +55,20 @@ vector<double> TestTable::query_belonging_genome(string sequenceStrbeforeComplem
                                 allScores[hashTable[kmerToStudy][positionGen]]++; //increment the value at the "genome number" index of vector allScores.
                         }
                 }
-
         }
         assert(allScores[0] > 0); //to verify if there is the genome 0.
         uint32 positionGeno(0);
         for (positionGeno=0; positionGeno < nbGenomes; positionGeno++) //browse the vector to transform hits number in Jaccard Index
         {
-                allScores[positionGen] = allScores[positionGen]/kmerSum;
+                allScores[positionGeno] = (long double) allScores[positionGeno]/(kmerSum);
         }
         return allScores;
 }
 
 
-vector<pair<double,uint16>> TestTable::sort_scores(vector<double> allScoresVector)
+vector<pair<long double,uint16>> TestTable::sort_scores(vector<long double> allScoresVector)
 {
-  vector<pair<double,uint16>> sortedScoresVector;
+  vector<pair<long double,uint16>> sortedScoresVector;
   for (uint genomeCursor = 0; genomeCursor < allScoresVector.size(); genomeCursor++)
   {
         sortedScoresVector.push_back(make_pair(allScoresVector[genomeCursor],genomeCursor));
@@ -79,7 +78,7 @@ vector<pair<double,uint16>> TestTable::sort_scores(vector<double> allScoresVecto
 }
 
 
-void TestTable::show_sorted_scores(vector<pair<double,uint16>> sortedScoresVector, uint howManyScoresToShow) // 0 mean all scores
+void TestTable::show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow) // 0 mean all scores
 {
   cout << "  ~    SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
   cout << "Jccrd Idx"<< "     " << "Genome number" << endl;
@@ -90,7 +89,7 @@ void TestTable::show_sorted_scores(vector<pair<double,uint16>> sortedScoresVecto
   }
   for (uint positionScore = 0; positionScore < limitNumber; positionScore++)
   {
-    cout << (uint) sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl; //Why '-nan' without uint ??
+    cout << sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl; //Why '-nan' without uint ??
   }
 }
 

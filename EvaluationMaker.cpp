@@ -26,7 +26,7 @@ ComparisonMatrix::ComparisonMatrix() : matrixHeight(0), testMatrix(), final_comp
 
 //~~Methods~~
 // the first result vector must come from testtable
-void ComparisonMatrix::add_result_vector(vector<double> resultVector)
+void ComparisonMatrix::add_result_vector(vector<long double> resultVector)
 {
         //Verify if vectors are the same size
         if (matrixHeight == 0)

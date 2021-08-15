@@ -47,14 +47,14 @@ public:
 
 //~~Attribute~~
 uint32 matrixHeight;
-vector<vector<double> > testMatrix;
+vector<vector<long double> > testMatrix;
 vector<Comparison_scores> final_comparison_score_vector;
 
 //~~Constructor~~
 ComparisonMatrix();
 
 //~~Methods~~
-void add_result_vector(vector<double> resultVector);
+void add_result_vector(vector<long double> resultVector);
 void create_comparison();
 void show_the_matrix();
 };

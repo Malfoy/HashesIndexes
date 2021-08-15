@@ -56,9 +56,9 @@ NaiveIndex(uint64 bucketsNumber,uint16 decimal_for_lsb = 256,uint16 nbgenomes = 
 //~~Methods~~
 //    ~~public~~
 void index_sequences_from_fasta(const string& fileName);
-vector<double> query_sequence(string sequenceSearchedBeforeComplement, double acceptanceTreshold = 0);
-vector<pair<double,uint16>> sort_scores(vector<double> allScoresVector);
-void show_sorted_scores(vector<pair<double,uint16>> sortedScoresVector, uint howManyScoresToShow = 0);
+vector<long double> query_sequence(string sequenceSearchedBeforeComplement, long double acceptanceTreshold = 0);
+vector<pair<long double,uint16>> sort_scores(vector<long double> allScoresVector);
+void show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow = 0);
 
 //    ~~private~~
 string get_line_fasta_for_naive(ifstream* partToExamine);
