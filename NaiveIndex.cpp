@@ -125,6 +125,7 @@ string NaiveIndex::get_line_fasta_for_naive(ifstream* partToExamine)
         while(caracter!='>' and caracter!=EOF) //avoid line with '>' and End Of File
         {
                 getline(*partToExamine,line);
+                line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
                 justTheSequence+=line;
                 caracter=partToExamine->peek();
         }
