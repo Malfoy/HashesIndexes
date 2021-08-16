@@ -52,7 +52,7 @@ vector<long double> NaiveIndex::query_sequence(string sequenceSearched, long dou
 {
         assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
         vector<long double> allScores(nb_genomes,0); //initialize the vector which will contains result
-        uint matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0); //different initializing
+        uint matrixSize(matrix[0].size()), noHitBucketsIndex(0), noHitBucketsQuery(0), hitsCounter(0); //different initializing
         vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched)); //compute sketch the sequence that we searched
 
         for (uint genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the genome lines
@@ -67,17 +67,25 @@ vector<long double> NaiveIndex::query_sequence(string sequenceSearched, long dou
                                 }
                                 else
                                 {
-                                        noHitBuckets++; //will participe at Jaccard index calcul
+                                        noHitBucketsQuery++; //will participe at Jaccard index calcul
                                 }
                         }
+                        else
+                        {
+                          if(matrix[bucketX][genomeY] != (decimal_lsb - 1))
+                          {
+                            noHitBucketsIndex++; //will participe at Jaccard index calcul
+                          }
+                        }
                 }
-                long double occurentJaccardIndex = (long double) hitsCounter/(hitsCounter+noHitBuckets);
+                long double occurentJaccardIndex = (long double) hitsCounter/(hitsCounter+noHitBucketsQuery+noHitBucketsIndex);
                 if(occurentJaccardIndex >= acceptanceTreshold) //record occurent score just above the treshold jaccard index
                 {
                         allScores[genomeY] = occurentJaccardIndex;
                 }
                 hitsCounter = 0;//reset for a new loop
-                noHitBuckets = 0;
+                noHitBucketsIndex = 0;
+                noHitBucketsQuery = 0;
                 occurentJaccardIndex = 0;
         }
         return allScores;
@@ -98,8 +106,8 @@ vector<pair<long double,uint16>> NaiveIndex::sort_scores(vector<long double> all
 
 void NaiveIndex::show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow) // 0 mean all scores
 {
-  cout << "  ~    SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
-  cout << "Jccrd Idx"<< "     " << "Genome number" << endl;
+  cout << "  ~    INDEX SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
+  cout << "Number Genome"<< "     " << "Jaccard Index" << endl;
   uint limitNumber(sortedScoresVector.size());
   if (limitNumber > howManyScoresToShow && howManyScoresToShow != 0)
   {
@@ -107,7 +115,7 @@ void NaiveIndex::show_sorted_scores(vector<pair<long double,uint16>> sortedScore
   }
   for (uint positionScore = 0; positionScore < limitNumber; positionScore++)
   {
-    cout << sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl;
+    cout << sortedScoresVector[positionScore].second << "                    " << sortedScoresVector[positionScore].first << endl;
   }
 }
 
@@ -125,9 +133,11 @@ string NaiveIndex::get_line_fasta_for_naive(ifstream* partToExamine)
         while(caracter!='>' and caracter!=EOF) //avoid line with '>' and End Of File
         {
                 getline(*partToExamine,line);
+                line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
                 justTheSequence+=line;
                 caracter=partToExamine->peek();
         }
+        cout << justTheSequence << endl;
         return justTheSequence;
 }
 

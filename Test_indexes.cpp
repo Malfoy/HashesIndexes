@@ -36,7 +36,7 @@ int main(int argc, char** argv)
         cout << endl << "parse_fasta_for_refTable" << endl;
         firstIndex.index_sequences_from_fasta(theFasta);
         cout << endl << "add_fasta_for_naive" << endl;
-        string oneGenome("atttaggcttcggattggcttaggctttagg");
+        string oneGenome("atgggcgggcgggcggggctttattagctga");
         ComparisonMatrix firstMatrix;
         cout << endl << "firstMatrix" << endl;
         vector<long double> TestResultVector(refTable.query_belonging_genome(oneGenome));

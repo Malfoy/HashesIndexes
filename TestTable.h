@@ -34,9 +34,10 @@ class TestTable {
 public:
 
 //~~Attributes~~
+uint32 Kmercount;
 int64 kmerSize;
 uint32 nbGenomes;
-std::tr1::unordered_map<string, vector<uint32> > hashTable;
+std::tr1::unordered_map<string, vector<pair<uint32,bool>>> hashTable;
 
 //~~Constructor~~
 TestTable(uint32 genomeQuantityForTest = 0);
@@ -53,7 +54,7 @@ string get_line_fasta_for_testtable(ifstream* partToExamine);
 void record_sequence(string sequenceStr, const uint32 Genome);
 string get_complement_or_not(string sequenceToComplement);
 
-  bool ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome); //to find a number (genome here) in a vector
+  bool ask_genomes_vector(vector<pair<uint32,bool>> genomesVector, uint32 wantedGenome); //to find a number (genome here) in a vector
 };
 
 #endif
