@@ -48,17 +48,18 @@ void NaiveIndex::index_sequences_from_fasta(const string& fileName)
 }
 
 
-vector<long double> NaiveIndex::query_sequence(string sequenceSearchedBeforeComplement, long double acceptanceTreshold)
+vector<long double> NaiveIndex::query_sequence(string sequenceSearched, long double acceptanceTreshold)
 {
         assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
         vector<long double> allScores(nb_genomes,0); //initialize the vector which will contains result
         uint matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0); //different initializing
-        vector<uint8> vectorisedQuery(compute_sketch(sequenceSearchedBeforeComplement)); //compute sketch the sequence that we searched
+        vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched)); //compute sketch the sequence that we searched
+
         for (uint genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the genome lines
         {
                 for (uint bucketX = 0; bucketX < nb_minimizer; bucketX++)//browse the query and genome sketch
                 {
-                        if(vectorisedQuery[bucketX] != (decimal_lsb - 1)) //because we don't want record unsignificant bucket, by defaut 255
+                         if(vectorisedQuery[bucketX] != (decimal_lsb - 1)) //because we don't want record unsignificant bucket, by defaut 255
                         {
                                 if((matrix[bucketX][genomeY]) == vectorisedQuery[bucketX])
                                 {
@@ -131,19 +132,19 @@ string NaiveIndex::get_line_fasta_for_naive(ifstream* partToExamine)
 }
 
 
-vector<uint8> NaiveIndex::compute_sketch(string sequenceStrBeforeComplement)
+vector<uint8> NaiveIndex::compute_sketch(string sequenceStr)
 {
-        string sequenceStr(get_complement_or_not(sequenceStrBeforeComplement));
         vector<uint8> result(nb_minimizer,(pow(2,number_of_LSB)-1)); // the resulting vector
         uint sequenceSize(sequenceStr.size()), position(0);
 
         /* a For loop to hash every kmer of a sequence, distribute them in
         different bucket with their MSB on one byte (255 buckets) and record
         some LSB number of the minimal hash least*/
+
         for (position = 0; position <= (sequenceSize - kmerSize); position++)
         {
                 string kmerToHash{sequenceStr.substr (position,kmerSize)};
-                int64 hashOfKmer(kmer_hasher(kmerToHash));
+                int64 hashOfKmer(kmer_hasher(get_complement_or_not(kmerToHash)));
                 if(result[get_bucket(hashOfKmer)] > get_hash(hashOfKmer))
                 {
                         result[get_bucket(hashOfKmer)] = get_hash(hashOfKmer);

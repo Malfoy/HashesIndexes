@@ -39,15 +39,15 @@ void TestTable::parse_fasta_for_refTable(const string& fileName)
 }
 
 
-vector<long double> TestTable::query_belonging_genome(string sequenceStrbeforeComplement, long double thresholdJaccard)
+vector<long double> TestTable::query_belonging_genome(string sequenceStr, long double thresholdJaccard)
 {
-        string sequenceStr(get_complement_or_not(sequenceStrbeforeComplement));
         vector<long double> allScores(nbGenomes,0);//vector containing numbers of hit with the number genome for the index
         int sequenceSize(sequenceStr.size()), position(0), kmerSum(sequenceSize - kmerSize + 1);
         long unsigned int positionGen(0);//this type because it's compared to size()
         for (position = 0; position < (kmerSum); position++) //comparison loop of kmer and select the best result.
         {
-                string kmerToStudy{sequenceStr.substr (position,kmerSize)};
+                string kmerToStudybeforecomplement{sequenceStr.substr (position,kmerSize)};
+                string kmerToStudy(get_complement_or_not(kmerToStudybeforecomplement));
                 if (hashTable.count(kmerToStudy) == 1)
                 {
                         for (positionGen = 0; positionGen < hashTable[kmerToStudy].size(); positionGen++) //browsing of every genome associated with kmer
@@ -89,7 +89,7 @@ void TestTable::show_sorted_scores(vector<pair<long double,uint16>> sortedScores
   }
   for (uint positionScore = 0; positionScore < limitNumber; positionScore++)
   {
-    cout << sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl; //Why '-nan' without uint ??
+    cout << (double) sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl;
   }
 }
 
@@ -114,14 +114,14 @@ string TestTable::get_line_fasta_for_testtable(ifstream* partToExamine)
 }
 
 
-void TestTable::record_sequence(string sequenceStrbeforeComplement, const uint32 Genome)
+void TestTable::record_sequence(string sequenceStr, const uint32 Genome)
 {
-        string sequenceStr(get_complement_or_not(sequenceStrbeforeComplement));
         // insertion loop of kmer
         int sequenceSize(sequenceStr.size()), position(0);
         for (position = 0; position < (sequenceSize - kmerSize); position++)
         {
-                string kmerToStudy{sequenceStr.substr(position,kmerSize)};
+                string kmerToStudybeforecomplement{sequenceStr.substr(position,kmerSize)};
+                string kmerToStudy(get_complement_or_not(kmerToStudybeforecomplement));
                 if (hashTable.count(kmerToStudy) == 1) // verify if there is already the kmer
                 {
                         if (ask_genomes_vector(hashTable[kmerToStudy],Genome) == false) // if it's not the same last genome then it push back.

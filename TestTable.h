@@ -44,13 +44,13 @@ TestTable(uint32 genomeQuantityForTest = 0);
 //~~Methods~~
 //    ~~public~~
 void parse_fasta_for_refTable(const string& fileName);
-vector<long double> query_belonging_genome(string sequenceStrbeforeComplement, long double thresholdJaccard = 0);
+vector<long double> query_belonging_genome(string sequenceStr, long double thresholdJaccard = 0);
 vector<pair<long double,uint16>> sort_scores(vector<long double> allScoresVector);
 void show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow = 0);
 
 //    ~~private~~
 string get_line_fasta_for_testtable(ifstream* partToExamine);
-void record_sequence(string sequenceStrbeforeComplement, const uint32 Genome);
+void record_sequence(string sequenceStr, const uint32 Genome);
 string get_complement_or_not(string sequenceToComplement);
 
   bool ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome); //to find a number (genome here) in a vector
