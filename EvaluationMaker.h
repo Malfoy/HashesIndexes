@@ -32,11 +32,12 @@ using namespace std;
 
 struct  Comparison_scores {
         uint32 studiedGenomeNumber = 0;
-        double success = 0;
-        double falsePositive = 0;
-        double falseNegative = 0;
-        double tooMuchKmer = 0;
-        double notEnoughKmer = 0;
+        long double success = 0;
+        long double falsePositive = 0;
+        long double falseNegative = 0;
+        long double tooMuchKmer = 0;
+        long double notEnoughKmer = 0;
+        uint32 zeroHit = 0;
 };
 
 
@@ -54,9 +55,13 @@ vector<Comparison_scores> final_comparison_score_vector;
 ComparisonMatrix();
 
 //~~Methods~~
+//    ~~public~~
 void add_result_vector(vector<long double> resultVector);
 void create_comparison();
 void show_the_matrix();
+
+//    ~~private~~
+int get_number_digits(long double aNumber);
 };
 
 #endif
