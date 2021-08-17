@@ -60,7 +60,6 @@ void ComparisonMatrix::create_comparison()
                                 if (testMatrix[0][genomeIndex] == 0)
                                 {
                                   differentScores[6]++;
-                                  cout << "hehe " << differentScores[6] << endl;
                                 }
                         }
                         else if (testMatrix[methodLine][genomeIndex] == 0)//false positive
