@@ -137,7 +137,6 @@ string NaiveIndex::get_line_fasta_for_naive(ifstream* partToExamine)
                 justTheSequence+=line;
                 caracter=partToExamine->peek();
         }
-        cout << justTheSequence << endl;
         return justTheSequence;
 }
 

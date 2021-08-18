@@ -19,7 +19,7 @@ using namespace std;
 
 
 //~~Constructor~~
-TestTable::TestTable(uint32 genomeQuantityForTest) : Kmercount(0),kmerSize(31), nbGenomes(genomeQuantityForTest), hashTable()
+TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(genomeQuantityForTest), hashTable(), kmerCountVector()
 {
 }
 
@@ -50,13 +50,16 @@ vector<long double> TestTable::query_belonging_genome(string sequenceStr, long d
                 string kmerToStudy(get_complement_or_not(kmerToStudybeforecomplement));
                 if (hashTable.count(kmerToStudy) == 1)
                 {
-                        kmerhittoremove++; // for the Jaccard index
                         for (positionGen = 0; positionGen < hashTable[kmerToStudy].size(); positionGen++) //browsing of every genome associated with kmer
                         {
                                 if (hashTable[kmerToStudy][positionGen].second == true)
                                 {
                                   allScores[hashTable[kmerToStudy][positionGen].first]++; //increment the value at the "genome number" index of vector allScores.
                                   hashTable[kmerToStudy][positionGen].second = false; // prevent from counting gain the same kmer for the same genome
+                                }
+                                else
+                                {
+                                  kmerhittoremove++; // for the Jaccard index
                                 }
                         }
                 }
@@ -65,7 +68,7 @@ vector<long double> TestTable::query_belonging_genome(string sequenceStr, long d
         uint32 positionGeno(0);
         for (positionGeno=0; positionGeno < nbGenomes; positionGeno++) //browse the vector to transform hits number in Jaccard Index
         {
-                allScores[positionGeno] = (long double) allScores[positionGeno]/(allScores[positionGeno] + (kmerSumQuery - kmerhittoremove) + Kmercount);
+          allScores[positionGeno] = (long double) allScores[positionGeno]/(allScores[positionGeno] + (kmerSumQuery - kmerhittoremove - allScores[positionGeno]) + (kmerCountVector[positionGeno] - allScores[positionGeno]));
         }
         return allScores;
 }
@@ -123,8 +126,8 @@ string TestTable::get_line_fasta_for_testtable(ifstream* partToExamine)
 void TestTable::record_sequence(string sequenceStr, const uint32 Genome)
 {
         // insertion loop of kmer
-        int sequenceSize(sequenceStr.size()), position(0);
-        for (position = 0; position < (sequenceSize - kmerSize); position++)
+        int sequenceSize(sequenceStr.size()), position(0), Kmercount(0);
+        for (position = 0; position <= (sequenceSize - kmerSize); position++)
         {
                 string kmerToStudybeforecomplement{sequenceStr.substr(position,kmerSize)};
                 string kmerToStudy(get_complement_or_not(kmerToStudybeforecomplement));
@@ -142,6 +145,7 @@ void TestTable::record_sequence(string sequenceStr, const uint32 Genome)
                         Kmercount++; // for the Jaccard index
                 }
         }
+        kmerCountVector.push_back(Kmercount); // for the Jaccard index
 }
 
 

@@ -34,10 +34,10 @@ class TestTable {
 public:
 
 //~~Attributes~~
-uint32 Kmercount;
 int64 kmerSize;
 uint32 nbGenomes;
 std::tr1::unordered_map<string, vector<pair<uint32,bool>>> hashTable;
+vector<uint32> kmerCountVector;
 
 //~~Constructor~~
 TestTable(uint32 genomeQuantityForTest = 0);

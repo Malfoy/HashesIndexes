@@ -30,13 +30,13 @@ int main(int argc, char** argv)
         cout << endl << "the fasta" << endl;
         TestTable refTable;
         cout << endl << "reftable" << endl;
-        NaiveIndex firstIndex(512,256);//((bucketnumbers, binary decimal (2,4,8...1024...) for record))
+        NaiveIndex firstIndex(1024,256);//((bucketnumbers, binary decimal (2,4,8...1024...) for record))
         cout << endl << "firstindex" << endl;
         refTable.parse_fasta_for_refTable(theFasta);
         cout << endl << "parse_fasta_for_refTable" << endl;
         firstIndex.index_sequences_from_fasta(theFasta);
         cout << endl << "add_fasta_for_naive" << endl;
-        string oneGenome("atgggcgggcgggcggggctttattagctga");
+        string oneGenome("atgcgatgcgatcgatgcagtcgatgcagtcgatc");
         ComparisonMatrix firstMatrix;
         cout << endl << "firstMatrix" << endl;
         vector<long double> TestResultVector(refTable.query_belonging_genome(oneGenome));
