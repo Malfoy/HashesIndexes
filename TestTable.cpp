@@ -39,7 +39,7 @@ void TestTable::parse_fasta_for_refTable(const string& fileName)
 }
 
 
-vector<long double> TestTable::query_belonging_genome(string sequenceStr, long double thresholdJaccard)
+vector<long double> TestTable::query_belonging_genome(string sequenceStr)
 {
         vector<long double> allScores(nbGenomes,0);//vector containing numbers of hit with the number genome for the index
         int sequenceSize(sequenceStr.size()), position(0), kmerhittoremove(0), kmerSumQuery(sequenceSize - kmerSize + 1);
@@ -74,14 +74,29 @@ vector<long double> TestTable::query_belonging_genome(string sequenceStr, long d
 }
 
 
-vector<pair<long double,uint16>> TestTable::sort_scores(vector<long double> allScoresVector)
+vector<pair<long double,uint16>> TestTable::sort_scores(vector<long double> allScoresVector, long double thresholdJaccard)
 {
+  assert(thresholdJaccard >= 0 && thresholdJaccard <= 1);//verify the value of acceptance treshold
   vector<pair<long double,uint16>> sortedScoresVector;
+  uint thresholdPosition(0);
   for (uint genomeCursor = 0; genomeCursor < allScoresVector.size(); genomeCursor++)
   {
         sortedScoresVector.push_back(make_pair(allScoresVector[genomeCursor],genomeCursor));
   }
   sort (sortedScoresVector.rbegin(), sortedScoresVector.rend()); //rbegin (and rend) for descending else it would be begin
+  for (thresholdPosition = 0; thresholdPosition < sortedScoresVector.size(); thresholdPosition++) // loop to keep juste genome with value abose treshold jaccard index
+  {
+    if (thresholdJaccard > sortedScoresVector[thresholdPosition].first) // if below treshold stop and record subvector with value above the treshold
+    {
+      vector<pair<long double,uint16>> trimSortedScoresVector{sortedScoresVector.begin(), sortedScoresVector.begin() + thresholdPosition};
+      sortedScoresVector = trimSortedScoresVector;
+      break;
+    }
+  }
+  if (sortedScoresVector.size()==0)
+  {
+    cout << "   SortedScoresVector is empty, tresholdJaccard may be too high or no genome recorded. " << endl;
+  }
   return sortedScoresVector;
 }
 

@@ -45,8 +45,8 @@ TestTable(uint32 genomeQuantityForTest = 0);
 //~~Methods~~
 //    ~~public~~
 void parse_fasta_for_refTable(const string& fileName);
-vector<long double> query_belonging_genome(string sequenceStr, long double thresholdJaccard = 0);
-vector<pair<long double,uint16>> sort_scores(vector<long double> allScoresVector);
+vector<long double> query_belonging_genome(string sequenceStr);
+vector<pair<long double,uint16>> sort_scores(vector<long double> allScoresVector, long double thresholdJaccard = 0);
 void show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow = 0);
 
 //    ~~private~~

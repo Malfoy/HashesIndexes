@@ -48,9 +48,8 @@ void NaiveIndex::index_sequences_from_fasta(const string& fileName)
 }
 
 
-vector<long double> NaiveIndex::query_sequence(string sequenceSearched, long double acceptanceTreshold)
+vector<long double> NaiveIndex::query_sequence(string sequenceSearched)
 {
-        assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
         vector<long double> allScores(nb_genomes,0); //initialize the vector which will contains result
         uint matrixSize(matrix[0].size()), noHitBucketsIndex(0), noHitBucketsQuery(0), hitsCounter(0); //different initializing
         vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched)); //compute sketch the sequence that we searched
@@ -79,10 +78,7 @@ vector<long double> NaiveIndex::query_sequence(string sequenceSearched, long dou
                         }
                 }
                 long double occurentJaccardIndex = (long double) hitsCounter/(hitsCounter+noHitBucketsQuery+noHitBucketsIndex);
-                if(occurentJaccardIndex >= acceptanceTreshold) //record occurent score just above the treshold jaccard index
-                {
-                        allScores[genomeY] = occurentJaccardIndex;
-                }
+                allScores[genomeY] = occurentJaccardIndex;
                 hitsCounter = 0;//reset for a new loop
                 noHitBucketsIndex = 0;
                 noHitBucketsQuery = 0;
@@ -92,14 +88,29 @@ vector<long double> NaiveIndex::query_sequence(string sequenceSearched, long dou
 }
 
 
-vector<pair<long double,uint16>> NaiveIndex::sort_scores(vector<long double> allScoresVector)
+vector<pair<long double,uint16>> NaiveIndex::sort_scores(vector<long double> allScoresVector, long double thresholdJaccard)
 {
+  assert(thresholdJaccard >= 0 && thresholdJaccard <= 1);//verify the value of acceptance treshold
   vector<pair<long double,uint16>> sortedScoresVector;
+  uint thresholdPosition(0);
   for (uint genomeCursor = 0; genomeCursor < allScoresVector.size(); genomeCursor++)
   {
         sortedScoresVector.push_back(make_pair(allScoresVector[genomeCursor],genomeCursor));
   }
   sort (sortedScoresVector.rbegin(), sortedScoresVector.rend()); //rbegin (and rend) for descending else it would be begin
+  for (thresholdPosition = 0; thresholdPosition < sortedScoresVector.size(); thresholdPosition++) // loop to keep juste genome with value abose treshold jaccard index
+  {
+    if (thresholdJaccard > sortedScoresVector[thresholdPosition].first) // if below treshold stop and record subvector with value above the treshold
+    {
+      vector<pair<long double,uint16>> trimSortedScoresVector{sortedScoresVector.begin(), sortedScoresVector.begin() + thresholdPosition};
+      sortedScoresVector = trimSortedScoresVector;
+      break;
+    }
+  }
+  if (sortedScoresVector.size()==0)
+  {
+    cout << "   SortedScoresVector is empty, tresholdJaccard may be too high or no genome recorded. " << endl;
+  }
   return sortedScoresVector;
 }
 
