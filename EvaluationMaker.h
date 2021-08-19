@@ -59,6 +59,7 @@ ComparisonMatrix();
 void add_result_vector(vector<long double> resultVector);
 void create_comparison();
 void show_the_matrix();
+void write_result(string fileName);
 
 //    ~~private~~
 int get_number_digits(long double aNumber);

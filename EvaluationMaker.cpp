@@ -25,6 +25,10 @@ ComparisonMatrix::ComparisonMatrix() : matrixHeight(0), testMatrix(), final_comp
 
 
 //~~Methods~~
+
+
+//  ~~Public~~
+
 // the first result vector must come from testtable
 void ComparisonMatrix::add_result_vector(vector<long double> resultVector)
 {
@@ -111,6 +115,23 @@ void ComparisonMatrix::show_the_matrix()
 }
 
 
+void ComparisonMatrix::write_result(string fileName)
+{
+  ofstream myfile;
+  myfile.open (fileName);
+  myfile << "Method_Number,Success,False_positive,False_negative,with_too_much_kmer,with_not_enough_kmer" << endl;
+  for (uint methodPosition = 0; methodPosition < (uint) final_comparison_score_vector.size(); methodPosition++)
+  {
+    myfile << methodPosition << "," << final_comparison_score_vector[methodPosition].success << "," << final_comparison_score_vector[methodPosition].falsePositive << "," << final_comparison_score_vector[methodPosition].falseNegative << "," << final_comparison_score_vector[methodPosition].tooMuchKmer << "," << final_comparison_score_vector[methodPosition].notEnoughKmer << endl;
+  }
+  myfile.close();
+}
+
+
+
+
+
+//  ~~Private~~
 
 
 int ComparisonMatrix::get_number_digits(long double aNumber)//use for number spaces for show the matrix
