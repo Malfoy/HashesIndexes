@@ -11,6 +11,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <math.h>
+#include <cassert>
 #include "NaiveIndex.h"
 #include "EvaluationMaker.h"
 #include "TestTable.h"
@@ -23,43 +25,50 @@
 int main(int argc, char** argv)
 {
         //time
-        std::chrono::time_point<std::chrono::system_clock> start, end;
+        std::chrono::time_point<std::chrono::system_clock> start, end, startDB, endDB, startQuery, endQuery;
         start = std::chrono::system_clock::now();
 
-        string theFasta("plouf.fa");
-        cout << endl << "the fasta" << endl;
-        TestTable refTable;
-        cout << endl << "reftable" << endl;
-        NaiveIndex firstIndex(524288,256);//((bucketnumbers, binary decimal (2,4,8...1024...) for record))
-        cout << endl << "firstindex" << endl;
-        refTable.parse_fasta_for_refTable(theFasta);
-        cout << endl << "parse_fasta_for_refTable" << endl;
-        firstIndex.index_sequences_from_fasta(theFasta);
-        cout << endl << "add_fasta_for_naive" << endl;
-        ifstream theFileQuery("tada.fa");
-        string oneGenome(firstIndex.get_line_fasta_for_naive(&theFileQuery));
-        cout << endl << "tada extrait" << endl;
+        //create ComparisonMatrix
         ComparisonMatrix firstMatrix;
-        cout << endl << "firstMatrix" << endl;
+
+
+        //production of the (hash) Testtable
+        string theFasta("extract_from_10B.fa");
+        TestTable refTable;
+        refTable.parse_fasta_for_refTable(theFasta);
+        ifstream theFileQuery("little_extract_from_extract_from10B.fa");
+        string oneGenome(refTable.get_line_fasta_for_testtable(&theFileQuery));
         vector<long double> TestResultVector(refTable.query_belonging_genome(oneGenome));
-        cout << endl << "TestResultVector" << endl;
-        vector<pair<long double,uint16>> sortedVectorTest(refTable.sort_scores(TestResultVector,0.1));
-        cout << endl << "sort vector test" << endl;
+        vector<pair<long double,uint16>> sortedVectorTest(refTable.sort_scores(TestResultVector,0));
         refTable.show_sorted_scores(sortedVectorTest);
-        vector<long double> NaiveResultVector(firstIndex.query_sequence(oneGenome));
-        cout << endl << "NaiveResultVector" << endl;
-        vector<pair<long double,uint16>> sortedVector(firstIndex.sort_scores(NaiveResultVector,0.1));
-        cout << endl << "sort vector" << endl;
-        firstIndex.show_sorted_scores(sortedVector);
-        cout << endl << "show sorted vector" << endl;
         firstMatrix.add_result_vector(TestResultVector);
-        cout << endl << "firstMatrix.add_result_vector(TestResultVector)" << endl;
+
+        //production of the index(es)
+        for (uint binaryPower = 9; binaryPower < 25; binaryPower++)
+        {
+        string theFasta("extract_from_10B.fa");
+        assert(pow(2,binaryPower) > pow(2,8) && (pow(2,binaryPower) < pow(2,30)));
+        startDB = std::chrono::system_clock::now();
+        NaiveIndex firstIndex(pow(2,binaryPower),256);//((bucketnumbers, binary decimal (2,4,8...1024...) for record))
+        firstIndex.index_sequences_from_fasta(theFasta);
+        endDB = std::chrono::system_clock::now();
+        ifstream theFileQuery("little_extract_from_extract_from10B.fa");
+        startQuery = std::chrono::system_clock::now();
+        string oneGenome(firstIndex.get_line_fasta_for_naive(&theFileQuery));
+        vector<long double> NaiveResultVector(firstIndex.query_sequence(oneGenome));
+        endQuery = std::chrono::system_clock::now();
+        vector<pair<long double,uint16>> sortedVector(firstIndex.sort_scores(NaiveResultVector,0));
+        firstIndex.show_sorted_scores(sortedVector);
         firstMatrix.add_result_vector(NaiveResultVector);
-        cout << endl << "firstMatrix.add_result_vector(NaiveResultVector)" << endl;
+        firstMatrix.fill_time((binaryPower - 8), endDB-startDB, endQuery-startQuery);
+        }
+
+        //The comparison
         firstMatrix.create_comparison();
-        cout << endl << "firstMatrix.create_comparison()" << endl;
         firstMatrix.show_the_matrix();
-        cout << endl << "firstMatrix.show_the_matrix()" << endl;
+
+        //the record chosen
+        firstMatrix.write_result("Jaccard_index_result_with_time.csv", "jaccard", 1);
 
         end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsedTime(end - start);

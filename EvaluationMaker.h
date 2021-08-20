@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <utility>
 #include <tr1/unordered_map>
+#include <chrono>
 
 // removal '_t'
 typedef int8_t int8;
@@ -38,6 +39,8 @@ struct  Comparison_scores {
         long double tooMuchKmer = 0;
         long double notEnoughKmer = 0;
         uint32 zeroHit = 0;
+        double timeForDataBase = 999;
+        double timeForQuery = 999;
 };
 
 
@@ -50,7 +53,6 @@ public:
 uint32 matrixHeight;
 vector<vector<long double> > testMatrix;
 vector<Comparison_scores> final_comparison_score_vector;
-
 //~~Constructor~~
 ComparisonMatrix();
 
@@ -59,7 +61,8 @@ ComparisonMatrix();
 void add_result_vector(vector<long double> resultVector);
 void create_comparison();
 void show_the_matrix();
-void write_result(string fileName);
+void write_result(string fileName, string recordChoice = "comparison", bool timeOption = 0); // "comparison", "jaccard");
+void fill_time(uint32 comparisonToFill, std::chrono::duration<double> TimeDatabase, std::chrono::duration<double> TimeQuery);
 
 //    ~~private~~
 int get_number_digits(long double aNumber);

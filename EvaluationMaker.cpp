@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
+#include <chrono>
 #include <vector>
 #include <atomic>
 #include <functional>
@@ -88,7 +89,6 @@ void ComparisonMatrix::create_comparison()
                 final_comparison_score_vector[methodLine].falseNegative = (long double) differentScores[3]/matrixHeight;
                 final_comparison_score_vector[methodLine].tooMuchKmer = (long double) differentScores[4]/matrixHeight;
                 final_comparison_score_vector[methodLine].notEnoughKmer = (long double) differentScores[5]/matrixHeight;
-                final_comparison_score_vector[methodLine].zeroHit = differentScores[6];
 
         }
 }
@@ -115,14 +115,75 @@ void ComparisonMatrix::show_the_matrix()
 }
 
 
-void ComparisonMatrix::write_result(string fileName)
+void ComparisonMatrix::fill_time(uint32 comparisonToFill, std::chrono::duration<double> timeDatabase, std::chrono::duration<double> timeQuery)
+{
+  assert(comparisonToFill <= (uint32) final_comparison_score_vector.size());
+  final_comparison_score_vector[comparisonToFill].timeForDataBase = timeDatabase.count();
+  final_comparison_score_vector[comparisonToFill].timeForQuery = timeQuery.count();
+}
+
+
+void ComparisonMatrix::write_result(string fileName, string recordChoice, bool timeOption)
 {
   ofstream myfile;
   myfile.open (fileName);
-  myfile << "Method_Number,Success,False_positive,False_negative,with_too_much_kmer,with_not_enough_kmer" << endl;
-  for (uint methodPosition = 0; methodPosition < (uint) final_comparison_score_vector.size(); methodPosition++)
+  if (recordChoice == "comparison")
   {
-    myfile << methodPosition << "," << final_comparison_score_vector[methodPosition].success << "," << final_comparison_score_vector[methodPosition].falsePositive << "," << final_comparison_score_vector[methodPosition].falseNegative << "," << final_comparison_score_vector[methodPosition].tooMuchKmer << "," << final_comparison_score_vector[methodPosition].notEnoughKmer << endl;
+    myfile << "Method_Number,Success,False_positive,False_negative,with_too_much_kmer,with_not_enough_kmer";
+    if(timeOption)
+    {
+      myfile << ",time_for_database,time_for_query" << endl;
+    }
+    else
+    {
+      myfile << endl;
+    }
+    for (uint methodPosition = 0; methodPosition < (uint) final_comparison_score_vector.size(); methodPosition++)
+    {
+      myfile << methodPosition << "," << final_comparison_score_vector[methodPosition].success << "," << final_comparison_score_vector[methodPosition].falsePositive << "," << final_comparison_score_vector[methodPosition].falseNegative << "," << final_comparison_score_vector[methodPosition].tooMuchKmer << "," << final_comparison_score_vector[methodPosition].notEnoughKmer;
+      if(timeOption)
+      {
+        myfile << "," << final_comparison_score_vector[methodPosition].timeForDataBase << "," << final_comparison_score_vector[methodPosition].timeForQuery << endl;
+      }
+      else
+      {
+        myfile << endl;
+      }
+    }
+  }
+  else if (recordChoice == "jaccard")
+  {
+    myfile << "Genomenumber";
+    for (uint genomePosition = 0; genomePosition < (uint) testMatrix[0].size(); genomePosition++)
+    {
+      myfile << "," << genomePosition;
+    }
+    if(timeOption)
+    {
+      myfile << ",time_for_database,time_for_query" << endl;
+    }
+    else
+    {
+      myfile << endl;
+    }
+    myfile << endl;
+    for (uint methodPosition = 0; methodPosition < (uint) testMatrix.size(); methodPosition++)
+    {
+      myfile << "JaccardIndexMethod" << methodPosition;
+        for (uint genomePosition = 0; genomePosition < (uint) testMatrix[0].size(); genomePosition++)
+        {
+          myfile << "," << testMatrix[methodPosition][genomePosition];
+        }
+        if(timeOption)
+        {
+          myfile << "," << final_comparison_score_vector[methodPosition].timeForDataBase << "," << final_comparison_score_vector[methodPosition].timeForQuery << endl;
+        }
+        else
+        {
+          myfile << endl;
+        }
+      myfile << endl;
+    }
   }
   myfile.close();
 }
