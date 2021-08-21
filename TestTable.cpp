@@ -19,7 +19,7 @@ using namespace std;
 
 
 //~~Constructor~~
-TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(genomeQuantityForTest), hashTable()
+TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(genomeQuantityForTest), hashTable(), kmerCountVector()
 {
 }
 
@@ -39,12 +39,12 @@ void TestTable::parse_fasta_for_refTable(const string& fileName)
 }
 
 
-vector<long double> TestTable::query_belonging_genome(string sequenceStr, long double thresholdJaccard)
+vector<long double> TestTable::query_belonging_genome(string sequenceStr)
 {
         vector<long double> allScores(nbGenomes,0);//vector containing numbers of hit with the number genome for the index
-        int sequenceSize(sequenceStr.size()), position(0), kmerSum(sequenceSize - kmerSize + 1);
+        int sequenceSize(sequenceStr.size()), position(0), kmerhittoremove(0), kmerSumQuery(sequenceSize - kmerSize + 1);
         long unsigned int positionGen(0);//this type because it's compared to size()
-        for (position = 0; position < (kmerSum); position++) //comparison loop of kmer and select the best result.
+        for (position = 0; position < (kmerSumQuery); position++) //comparison loop of kmer and select the best result.
         {
                 string kmerToStudybeforecomplement{sequenceStr.substr (position,kmerSize)};
                 string kmerToStudy(get_complement_or_not(kmerToStudybeforecomplement));
@@ -52,7 +52,15 @@ vector<long double> TestTable::query_belonging_genome(string sequenceStr, long d
                 {
                         for (positionGen = 0; positionGen < hashTable[kmerToStudy].size(); positionGen++) //browsing of every genome associated with kmer
                         {
-                                allScores[hashTable[kmerToStudy][positionGen]]++; //increment the value at the "genome number" index of vector allScores.
+                                if (hashTable[kmerToStudy][positionGen].second == true)
+                                {
+                                  allScores[hashTable[kmerToStudy][positionGen].first]++; //increment the value at the "genome number" index of vector allScores.
+                                  hashTable[kmerToStudy][positionGen].second = false; // prevent from counting gain the same kmer for the same genome
+                                }
+                                else
+                                {
+                                  kmerhittoremove++; // for the Jaccard index
+                                }
                         }
                 }
         }
@@ -60,28 +68,43 @@ vector<long double> TestTable::query_belonging_genome(string sequenceStr, long d
         uint32 positionGeno(0);
         for (positionGeno=0; positionGeno < nbGenomes; positionGeno++) //browse the vector to transform hits number in Jaccard Index
         {
-                allScores[positionGeno] = (long double) allScores[positionGeno]/(kmerSum);
+          allScores[positionGeno] = (long double) allScores[positionGeno]/(allScores[positionGeno] + (kmerSumQuery - kmerhittoremove - allScores[positionGeno]) + (kmerCountVector[positionGeno] - allScores[positionGeno]));
         }
         return allScores;
 }
 
 
-vector<pair<long double,uint16>> TestTable::sort_scores(vector<long double> allScoresVector)
+vector<pair<long double,uint16>> TestTable::sort_scores(vector<long double> allScoresVector, long double thresholdJaccard)
 {
+  assert(thresholdJaccard >= 0 && thresholdJaccard <= 1);//verify the value of acceptance treshold
   vector<pair<long double,uint16>> sortedScoresVector;
+  uint thresholdPosition(0);
   for (uint genomeCursor = 0; genomeCursor < allScoresVector.size(); genomeCursor++)
   {
         sortedScoresVector.push_back(make_pair(allScoresVector[genomeCursor],genomeCursor));
   }
   sort (sortedScoresVector.rbegin(), sortedScoresVector.rend()); //rbegin (and rend) for descending else it would be begin
+  for (thresholdPosition = 0; thresholdPosition < sortedScoresVector.size(); thresholdPosition++) // loop to keep juste genome with value abose treshold jaccard index
+  {
+    if (thresholdJaccard > sortedScoresVector[thresholdPosition].first) // if below treshold stop and record subvector with value above the treshold
+    {
+      vector<pair<long double,uint16>> trimSortedScoresVector{sortedScoresVector.begin(), sortedScoresVector.begin() + thresholdPosition};
+      sortedScoresVector = trimSortedScoresVector;
+      break;
+    }
+  }
+  if (sortedScoresVector.size()==0)
+  {
+    cout << "   SortedScoresVector is empty, tresholdJaccard may be too high or no genome recorded. " << endl;
+  }
   return sortedScoresVector;
 }
 
 
 void TestTable::show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow) // 0 mean all scores
 {
-  cout << "  ~    SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
-  cout << "Jccrd Idx"<< "     " << "Genome number" << endl;
+  cout << "  ~    TESTABLE SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
+  cout << "Number Genome"<< "     " << "Jaccard Index" << endl;
   uint limitNumber(sortedScoresVector.size());
   if (limitNumber > howManyScoresToShow && howManyScoresToShow != 0)
   {
@@ -89,7 +112,7 @@ void TestTable::show_sorted_scores(vector<pair<long double,uint16>> sortedScores
   }
   for (uint positionScore = 0; positionScore < limitNumber; positionScore++)
   {
-    cout << (double) sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl;
+    cout << sortedScoresVector[positionScore].second << "                    " << sortedScoresVector[positionScore].first << endl;
   }
 }
 
@@ -118,8 +141,8 @@ string TestTable::get_line_fasta_for_testtable(ifstream* partToExamine)
 void TestTable::record_sequence(string sequenceStr, const uint32 Genome)
 {
         // insertion loop of kmer
-        int sequenceSize(sequenceStr.size()), position(0);
-        for (position = 0; position < (sequenceSize - kmerSize); position++)
+        int sequenceSize(sequenceStr.size()), position(0), Kmercount(0);
+        for (position = 0; position <= (sequenceSize - kmerSize); position++)
         {
                 string kmerToStudybeforecomplement{sequenceStr.substr(position,kmerSize)};
                 string kmerToStudy(get_complement_or_not(kmerToStudybeforecomplement));
@@ -127,15 +150,17 @@ void TestTable::record_sequence(string sequenceStr, const uint32 Genome)
                 {
                         if (ask_genomes_vector(hashTable[kmerToStudy],Genome) == false) // if it's not the same last genome then it push back.
                         {
-                                hashTable[kmerToStudy].push_back(Genome);
+                                hashTable[kmerToStudy].push_back(make_pair(Genome, true));
                         }
                 }
                 else
                 {
                         //hashTable[kmerToStudy].keptKmer = kmerToStudy;
-                        hashTable[kmerToStudy].push_back(Genome);
+                        hashTable[kmerToStudy].push_back(make_pair(Genome, true));
+                        Kmercount++; // for the Jaccard index
                 }
         }
+        kmerCountVector.push_back(Kmercount); // for the Jaccard index
 }
 
 
@@ -191,9 +216,9 @@ string TestTable::get_complement_or_not(string sequenceToComplement) // transfor
 
 
 
-bool TestTable::ask_genomes_vector(vector<uint32> genomesVector, uint32 wantedGenome)
+bool TestTable::ask_genomes_vector(vector<pair<uint32,bool>> genomesVector, uint32 wantedGenome)
 {
-        if (genomesVector.back() == wantedGenome)
+        if (genomesVector.back().first == wantedGenome)
         {
                 return true;
         }

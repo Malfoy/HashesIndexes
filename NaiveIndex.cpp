@@ -48,11 +48,10 @@ void NaiveIndex::index_sequences_from_fasta(const string& fileName)
 }
 
 
-vector<long double> NaiveIndex::query_sequence(string sequenceSearched, long double acceptanceTreshold)
+vector<long double> NaiveIndex::query_sequence(string sequenceSearched)
 {
-        assert(acceptanceTreshold >= 0 && acceptanceTreshold <= 1);//verify the value of acceptance treshold
         vector<long double> allScores(nb_genomes,0); //initialize the vector which will contains result
-        uint matrixSize(matrix[0].size()), noHitBuckets(0), hitsCounter(0); //different initializing
+        uint matrixSize(matrix[0].size()), noHitBucketsIndex(0), noHitBucketsQuery(0), hitsCounter(0); //different initializing
         vector<uint8> vectorisedQuery(compute_sketch(sequenceSearched)); //compute sketch the sequence that we searched
 
         for (uint genomeY = 0; genomeY < (matrixSize); genomeY++)//browse the genome lines
@@ -67,39 +66,59 @@ vector<long double> NaiveIndex::query_sequence(string sequenceSearched, long dou
                                 }
                                 else
                                 {
-                                        noHitBuckets++; //will participe at Jaccard index calcul
+                                        noHitBucketsQuery++; //will participe at Jaccard index calcul
                                 }
                         }
+                        else
+                        {
+                          if(matrix[bucketX][genomeY] != (decimal_lsb - 1))
+                          {
+                            noHitBucketsIndex++; //will participe at Jaccard index calcul
+                          }
+                        }
                 }
-                long double occurentJaccardIndex = (long double) hitsCounter/(hitsCounter+noHitBuckets);
-                if(occurentJaccardIndex >= acceptanceTreshold) //record occurent score just above the treshold jaccard index
-                {
-                        allScores[genomeY] = occurentJaccardIndex;
-                }
+                long double occurentJaccardIndex = (long double) hitsCounter/(hitsCounter+noHitBucketsQuery+noHitBucketsIndex);
+                allScores[genomeY] = occurentJaccardIndex;
                 hitsCounter = 0;//reset for a new loop
-                noHitBuckets = 0;
+                noHitBucketsIndex = 0;
+                noHitBucketsQuery = 0;
                 occurentJaccardIndex = 0;
         }
         return allScores;
 }
 
 
-vector<pair<long double,uint16>> NaiveIndex::sort_scores(vector<long double> allScoresVector)
+vector<pair<long double,uint16>> NaiveIndex::sort_scores(vector<long double> allScoresVector, long double thresholdJaccard)
 {
+  assert(thresholdJaccard >= 0 && thresholdJaccard <= 1);//verify the value of acceptance treshold
   vector<pair<long double,uint16>> sortedScoresVector;
+  uint thresholdPosition(0);
   for (uint genomeCursor = 0; genomeCursor < allScoresVector.size(); genomeCursor++)
   {
         sortedScoresVector.push_back(make_pair(allScoresVector[genomeCursor],genomeCursor));
   }
   sort (sortedScoresVector.rbegin(), sortedScoresVector.rend()); //rbegin (and rend) for descending else it would be begin
+  for (thresholdPosition = 0; thresholdPosition < sortedScoresVector.size(); thresholdPosition++) // loop to keep juste genome with value abose treshold jaccard index
+  {
+    if (thresholdJaccard > sortedScoresVector[thresholdPosition].first) // if below treshold stop and record subvector with value above the treshold
+    {
+      vector<pair<long double,uint16>> trimSortedScoresVector{sortedScoresVector.begin(), sortedScoresVector.begin() + thresholdPosition};
+      sortedScoresVector = trimSortedScoresVector;
+      break;
+    }
+  }
+  if (sortedScoresVector.size()==0)
+  {
+    cout << "   SortedScoresVector is empty, tresholdJaccard may be too high or no genome recorded. " << endl;
+  }
   return sortedScoresVector;
 }
 
 
 void NaiveIndex::show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow) // 0 mean all scores
 {
-  cout << "  ~    SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
-  cout << "Jccrd Idx"<< "     " << "Genome number" << endl;
+  cout << "  ~    INDEX SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
+  cout << "Number Genome"<< "     " << "Jaccard Index" << endl;
   uint limitNumber(sortedScoresVector.size());
   if (limitNumber > howManyScoresToShow && howManyScoresToShow != 0)
   {
@@ -107,7 +126,7 @@ void NaiveIndex::show_sorted_scores(vector<pair<long double,uint16>> sortedScore
   }
   for (uint positionScore = 0; positionScore < limitNumber; positionScore++)
   {
-    cout << sortedScoresVector[positionScore].first << "               " << sortedScoresVector[positionScore].second << endl;
+    cout << sortedScoresVector[positionScore].second << "                    " << sortedScoresVector[positionScore].first << endl;
   }
 }
 
