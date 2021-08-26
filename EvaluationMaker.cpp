@@ -123,7 +123,7 @@ void ComparisonMatrix::fill_time(uint32 comparisonToFill, std::chrono::duration<
 }
 
 
-void ComparisonMatrix::write_result(string fileName, string recordChoice, bool timeOption)
+void ComparisonMatrix::write_result(string fileName, string recordChoice, bool timeOption) //record choice possible : "comparison", "jaccardBucketsNumberdifference"
 {
   ofstream myfile;
   myfile.open (fileName);
@@ -151,12 +151,12 @@ void ComparisonMatrix::write_result(string fileName, string recordChoice, bool t
       }
     }
   }
-  else if (recordChoice == "jaccard")
+  else if (recordChoice == "jaccardBucketsNumberdifference")
   {
-    myfile << "Genomenumber";
+    myfile << "Bucket_Number_with_pow_2";
     for (uint genomePosition = 0; genomePosition < (uint) testMatrix[0].size(); genomePosition++)
     {
-      myfile << "," << genomePosition;
+      myfile << ",Genome" << genomePosition;
     }
     if(timeOption)
     {
@@ -167,9 +167,9 @@ void ComparisonMatrix::write_result(string fileName, string recordChoice, bool t
       myfile << endl;
     }
     myfile << endl;
-    for (uint methodPosition = 0; methodPosition < (uint) testMatrix.size(); methodPosition++)
+    for (uint methodPosition = 1; methodPosition < (uint) testMatrix.size(); methodPosition++)
     {
-      myfile << "JaccardIndexMethod" << methodPosition;
+      myfile << methodPosition + 9;
         for (uint genomePosition = 0; genomePosition < (uint) testMatrix[0].size(); genomePosition++)
         {
           myfile << "," << testMatrix[methodPosition][genomePosition];

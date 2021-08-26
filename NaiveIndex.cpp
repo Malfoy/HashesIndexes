@@ -117,7 +117,7 @@ vector<pair<long double,uint16>> NaiveIndex::sort_scores(vector<long double> all
 
 void NaiveIndex::show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow) // 0 mean all scores
 {
-  cout << "  ~    INDEX SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
+  cout << endl << "  ~    INDEX SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
   cout << "Number Genome"<< "     " << "Jaccard Index" << endl;
   uint limitNumber(sortedScoresVector.size());
   if (limitNumber > howManyScoresToShow && howManyScoresToShow != 0)
@@ -270,7 +270,7 @@ uint8 NaiveIndex::get_hyperloglog(uint64 primaryHash)
 }
 
 
-uint64 NaiveIndex::xs(uint64 y) //Hash xshort method
+uint64 NaiveIndex::xs(uint64 y) //Hash  Xorshift method
 {
         y^=(y<<13);
         y^=(y>>17);
