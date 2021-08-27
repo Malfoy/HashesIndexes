@@ -169,7 +169,7 @@ void ComparisonMatrix::write_result(string fileName, string recordChoice, bool t
     myfile << endl;
     for (uint methodPosition = 1; methodPosition < (uint) testMatrix.size(); methodPosition++)
     {
-      myfile << methodPosition + 9;
+      myfile << methodPosition + 8;
         for (uint genomePosition = 0; genomePosition < (uint) testMatrix[0].size(); genomePosition++)
         {
           myfile << "," << testMatrix[methodPosition][genomePosition];
@@ -185,7 +185,41 @@ void ComparisonMatrix::write_result(string fileName, string recordChoice, bool t
       myfile << endl;
     }
   }
+  else if (recordChoice == "jaccardBucketsNumberdifference(col_inversion)") //for better csv file, create a separated time file 
+  {
+    //first line coloumtitles
+    myfile << "Genome";
+    for (uint methodPosition = 1; methodPosition < (uint) testMatrix.size(); methodPosition++)
+    {
+      myfile << "," << methodPosition + 8 << " b";
+    }
+      myfile << endl;
+
+    //observations line
+    for (uint genomePosition = 0; genomePosition < (uint) testMatrix[0].size(); genomePosition++)
+    {
+      myfile << genomePosition;
+
+      for (uint methodPosition = 1; methodPosition < (uint) testMatrix.size(); methodPosition++)
+        {
+          myfile << "," << testMatrix[methodPosition][genomePosition];
+        }
+      myfile << endl;
+    }
+    myfile << endl;
+  }
   myfile.close();
+  if(timeOption)
+  {
+    ofstream timefile;
+    timefile.open ("times_calculated.csv");
+    timefile << "method_number,time_for_database,time_for_query" << endl;
+    for (uint methodPosition = 1; methodPosition < (uint) testMatrix.size(); methodPosition++)
+    {
+      timefile << methodPosition << "," << final_comparison_score_vector[methodPosition].timeForDataBase << "," << final_comparison_score_vector[methodPosition].timeForQuery << endl;
+    }
+    timefile.close();
+  }
 }
 
 
