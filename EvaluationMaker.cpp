@@ -185,7 +185,7 @@ void ComparisonMatrix::write_result(string fileName, string recordChoice, bool t
       myfile << endl;
     }
   }
-  else if (recordChoice == "jaccardBucketsNumberdifference(col_inversion)") //for better csv file, create a separated time file 
+  else if (recordChoice == "jaccardBucketsNumberdifference(col_inversion)") //for better csv file, create a separated time file
   {
     //first line coloumtitles
     myfile << "Genome";
@@ -222,6 +222,24 @@ void ComparisonMatrix::write_result(string fileName, string recordChoice, bool t
   }
 }
 
+
+string ComparisonMatrix::get_string_two_best_JacInd()
+{
+  string theString;
+  theString += (to_string(testMatrix[0][0]) + ",");
+  for (uint genomePlace = 0; genomePlace < 2; genomePlace++) //record target genome, and best unwanted genome
+  {
+    for (uint methodPosition = 1; methodPosition < (uint) testMatrix.size(); methodPosition++)
+    {
+      theString += (to_string(testMatrix[methodPosition][genomePlace]) + ",");
+    }
+    if(genomePlace == 1)
+    {
+    theString.pop_back(); //to remove comma
+    }
+  }
+  return theString;
+}
 
 
 

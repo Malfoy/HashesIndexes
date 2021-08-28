@@ -61,7 +61,8 @@ ComparisonMatrix();
 void add_result_vector(vector<long double> resultVector);
 void create_comparison();
 void show_the_matrix();
-void write_result(string fileName, string recordChoice = "comparison", bool timeOption = 0); // "comparison", "jaccard");
+void write_result(string fileName, string recordChoice = "comparison", bool timeOption = 0); // "comparison", "jaccard", "jaccardBucketsNumberdifference", "jaccardBucketsNumberdifference(col_inversion)";
+string get_string_two_best_JacInd(); //use for Error rate list experiment
 void fill_time(uint32 comparisonToFill, std::chrono::duration<double> TimeDatabase, std::chrono::duration<double> TimeQuery);
 
 //    ~~private~~
