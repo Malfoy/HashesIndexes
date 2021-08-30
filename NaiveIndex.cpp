@@ -25,7 +25,7 @@ hash<std::string> kmer_hasher;
 
 //~~Constructor~~
 
-NaiveIndex::NaiveIndex(uint64 bucketsNumber,uint16 decimal_for_lsb,uint16 nbgenomes) : nb_minimizer(bucketsNumber), nb_genomes(nbgenomes), decimal_lsb(decimal_for_lsb), number_of_LSB(log2(decimal_for_lsb)), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
+NaiveIndex::NaiveIndex(uint64 bucketsNumber,uint16 decimal_for_lsb,uint16 nbgenomes) : goodGenomeVector({-2}), nb_minimizer(bucketsNumber), nb_genomes(nbgenomes), decimal_lsb(decimal_for_lsb), number_of_LSB(log2(decimal_for_lsb)), bit_to_keep_minimizer(log2(bucketsNumber)), kmerSize(31), matrix(bucketsNumber)
 {
         matrix.resize(bucketsNumber);
 }
@@ -46,6 +46,51 @@ void NaiveIndex::index_sequences_from_fasta(const string& fileName)
                 add_sketch(compute_sketch(get_line_fasta_for_naive(&theRead)));
         }
 }
+
+
+vector<vector<long double>> NaiveIndex::get_all_queries_scores_for_index(vector<vector<long double>> ultimVector, const string& fileName)
+{
+  ifstream theRead(fileName);
+  vector<int> wichGoodGenome(goodGenomeVector);
+  while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
+  {
+          vector<pair<long double,uint16>> sortedVectorTest(sort_scores(query_sequence(get_line_fasta_for_naive(&theRead))));
+          vector <long double> goodVector;
+          if (wichGoodGenome[0] != -1)
+          {
+            if (wichGoodGenome[0] == -2)
+            {
+              wichGoodGenome[0] = sortedVectorTest[0].second;
+              if (sortedVectorTest[0].first == 0)
+              {
+                wichGoodGenome[0] = 0;
+              }
+            }
+            else
+            {
+              wichGoodGenome.push_back(sortedVectorTest[0].second);
+              if (sortedVectorTest[0].first == 0)
+              {
+                wichGoodGenome.back() = 0;
+              }
+            }
+          }
+          for(uint position = 0; position < (uint) sortedVectorTest.size(); position++)
+          {
+            goodVector.push_back(sortedVectorTest[position].first);
+          }
+          ultimVector.push_back(goodVector);
+  }
+  goodGenomeVector = wichGoodGenome;
+  return ultimVector;
+}
+
+
+vector<int> NaiveIndex::get_good_genome_vector()
+{
+  return goodGenomeVector;
+}
+
 
 
 vector<long double> NaiveIndex::query_sequence(string sequenceSearched)

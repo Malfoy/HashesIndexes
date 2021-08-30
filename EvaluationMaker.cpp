@@ -242,6 +242,41 @@ string ComparisonMatrix::get_string_two_best_JacInd()
 }
 
 
+string ComparisonMatrix::get_other_string_from_ultim_vector(vector<vector<long double>> ultimVector, uint queriesNumber,uint cursor)
+{
+  uint methodsNumber((uint)ultimVector.size()/queriesNumber), otherCursor(1);
+  vector<uint> targetQuery;
+  while (otherCursor < methodsNumber)
+  {
+    targetQuery.push_back(cursor + (otherCursor*queriesNumber));
+    otherCursor++;
+  }
+  string theString;
+  theString += (to_string(ultimVector[cursor][0]) + ",");
+  for (uint position = 0; position < (uint) targetQuery.size(); position++)
+  {
+    theString += (to_string(ultimVector[targetQuery[position]][0]) + ",");
+  }
+  theString.pop_back(); //to remove comma
+  return theString;
+}
+
+
+void ComparisonMatrix::compare_good_genome(vector<int> refVector, vector<int> indVector)
+{
+  assert(refVector.size()==indVector.size());
+  uint counter(0);
+  for (uint position = 0; position < refVector.size(); position++)
+  {
+    if(refVector[position] != indVector[position])
+    {
+      counter++;
+    }
+  }
+  cout << "There are " << counter << " no corresponding first best genome between reftable and the tested index.";
+}
+
+
 
 
 //  ~~Private~~

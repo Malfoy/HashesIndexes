@@ -19,7 +19,7 @@ using namespace std;
 
 
 //~~Constructor~~
-TestTable::TestTable(uint32 genomeQuantityForTest) : kmerSize(31), nbGenomes(genomeQuantityForTest), hashTable(), kmerCountVector()
+TestTable::TestTable(uint32 genomeQuantityForTest) : goodGenomeVector({-2}), kmerSize(31), nbGenomes(genomeQuantityForTest), hashTable(), kmerCountVector()
 {
 }
 
@@ -36,6 +36,50 @@ void TestTable::parse_fasta_for_refTable(const string& fileName)
                 record_sequence(get_line_fasta_for_testtable(&theRead),nbGenomes);
                 nbGenomes++;
         }
+}
+
+
+vector<vector<long double>> TestTable::get_all_queries_scores_for_table(vector<vector<long double>> ultimVector, const string& fileName)
+{
+  ifstream theRead(fileName);
+  vector<int> wichGoodGenome(goodGenomeVector);
+  while(not theRead.eof()) //put sequences string in genome vector while it's not End of File
+  {
+          vector<pair<long double,uint16>> sortedVectorTest(sort_scores(query_belonging_genome(get_line_fasta_for_testtable(&theRead))));
+          vector <long double> goodVector;
+          if (wichGoodGenome[0] != -1)
+          {
+            if (wichGoodGenome[0] == -2)
+            {
+              wichGoodGenome[0] = sortedVectorTest[0].second;
+              if (sortedVectorTest[0].first == 0)
+              {
+                wichGoodGenome[0] = 0;
+              }
+            }
+            else
+            {
+              wichGoodGenome.push_back(sortedVectorTest[0].second);
+              if (sortedVectorTest[0].first == 0)
+              {
+                wichGoodGenome.back() = 0;
+              }
+            }
+          }
+          for(uint position = 0; position < (uint) sortedVectorTest.size(); position++)
+          {
+            goodVector.push_back(sortedVectorTest[position].first);
+          }
+          ultimVector.push_back(goodVector);
+  }
+  goodGenomeVector = wichGoodGenome;
+  return ultimVector;
+}
+
+
+vector<int> TestTable::get_good_genome_vector()
+{
+  return goodGenomeVector;
 }
 
 
@@ -103,7 +147,7 @@ vector<pair<long double,uint16>> TestTable::sort_scores(vector<long double> allS
 
 void TestTable::show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow) // 0 mean all scores
 {
-  cout << "  ~    TESTABLE SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
+  cout << endl << "  ~    TESTABLE SORTED SCORES WITH HIS GENOME NUMBER     ~  " << endl;
   cout << "Number Genome"<< "     " << "Jaccard Index" << endl;
   uint limitNumber(sortedScoresVector.size());
   if (limitNumber > howManyScoresToShow && howManyScoresToShow != 0)

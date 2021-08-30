@@ -62,8 +62,10 @@ void add_result_vector(vector<long double> resultVector);
 void create_comparison();
 void show_the_matrix();
 void write_result(string fileName, string recordChoice = "comparison", bool timeOption = 0); // "comparison", "jaccard", "jaccardBucketsNumberdifference", "jaccardBucketsNumberdifference(col_inversion)";
-string get_string_two_best_JacInd(); //use for Error rate list experiment
 void fill_time(uint32 comparisonToFill, std::chrono::duration<double> TimeDatabase, std::chrono::duration<double> TimeQuery);
+string get_string_two_best_JacInd(); //use for Error rate list experiment
+string get_other_string_from_ultim_vector(vector<vector<long double>> ultimVector, uint queriesNumber,uint cursor); //use for thousands genome experience
+void compare_good_genome(vector<int> refVector, vector<int> indVector); //use for thousands genome experience
 
 //    ~~private~~
 int get_number_digits(long double aNumber);

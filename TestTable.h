@@ -34,10 +34,12 @@ class TestTable {
 public:
 
 //~~Attributes~~
+vector<int> goodGenomeVector;
 int64 kmerSize;
 uint32 nbGenomes;
 std::tr1::unordered_map<string, vector<pair<uint32,bool>>> hashTable;
 vector<uint32> kmerCountVector;
+
 
 //~~Constructor~~
 TestTable(uint32 genomeQuantityForTest = 0);
@@ -45,6 +47,8 @@ TestTable(uint32 genomeQuantityForTest = 0);
 //~~Methods~~
 //    ~~public~~
 void parse_fasta_for_refTable(const string& fileName);
+vector<vector<long double>> get_all_queries_scores_for_table(vector<vector<long double>> ultimVector,const string& fileName);
+vector<int> get_good_genome_vector();
 vector<long double> query_belonging_genome(string sequenceStr);
 vector<pair<long double,uint16>> sort_scores(vector<long double> allScoresVector, long double thresholdJaccard = 0);
 void show_sorted_scores(vector<pair<long double,uint16>> sortedScoresVector, uint howManyScoresToShow = 0);
