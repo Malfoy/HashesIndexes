@@ -99,7 +99,7 @@ vector<long double> TestTable::query_belonging_genome(string sequenceStr)
                                 if (hashTable[kmerToStudy][positionGen].second == true)
                                 {
                                   allScores[hashTable[kmerToStudy][positionGen].first]++; //increment the value at the "genome number" index of vector allScores.
-                                  hashTable[kmerToStudy][positionGen].second = false; // prevent from counting gain the same kmer for the same genome
+                                  hashTable[kmerToStudy][positionGen].second = true; //TODOWARNING NOT TRUE BUT FaLSE prevent from counting gain the same kmer for the same genome
                                 }
                                 else
                                 {
